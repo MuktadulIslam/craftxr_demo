@@ -2,7 +2,8 @@
 import { useRouter } from 'next/navigation';
 import { useGetSimulationChat } from "@/lib/hooks/simulationHook";
 import { useEffect, useState } from "react"
-import { DialogFlowEdge, getNodesAndEdges, DialogFlowNode } from "@/components/reactflow/utils";
+import { getNodesAndEdges } from "@/components/reactflow/utils";
+import { DialogFlowEdge, DialogFlowNode } from "@/components/reactflow/types";
 import SimulationTree from '@/components/reactflow/SimulationTree';
 
 interface UpdateSimulationProps {
@@ -38,7 +39,7 @@ export default function UpdateSimulation({ simulationID, setUpdatedNodes, setUpd
             setUpdatedNodes(initialNodes)
             setUpdatedEdges(initialEdges)
         }
-    }, [chatData, editable, setUpdatedEdges,setUpdatedNodes]);
+    }, [chatData, editable, setUpdatedEdges, setUpdatedNodes]);
 
     if (chatLoading) {
         return (
@@ -54,9 +55,9 @@ export default function UpdateSimulation({ simulationID, setUpdatedNodes, setUpd
                 initialEdges={initialEdges}
                 initialNodes={initialNodes}
                 editable={editable}
-                allowToAddNewDialog= {false}
-                allowToRemoveDialog= {false}
-                allowToUpdateDialog= {true}
+                allowToAddNewDialog={false}
+                allowToRemoveDialog={false}
+                allowToUpdateDialog={true}
                 setUpdatedNodes={setUpdatedNodes}
                 setUpdatedEdges={setUpdatedEdges}
             />

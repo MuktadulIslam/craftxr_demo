@@ -32,12 +32,14 @@ interface LocalStorageContextType {
     readFromLocalStorage: (key: string) => string | null;
     saveToLocalStorage: (key: string, value: string) => void;
     saveToLocalStorageAsync: (key: string, value: string) => void;
+    deleteFromLocalStorage: (id: string) => void;
 }
 
 export const LocalStorageContext = createContext<LocalStorageContextType>({
     readFromLocalStorage: () => null,
     saveToLocalStorage: () => { },
-    saveToLocalStorageAsync: () => { }
+    saveToLocalStorageAsync: () => { },
+    deleteFromLocalStorage: () => { }
 });
 
 export default function LocalStorageProvider({ children }: { children: ReactNode }) {
@@ -66,7 +68,7 @@ export default function LocalStorageProvider({ children }: { children: ReactNode
         setTimeout(() => {
             dispatch(setLoaclStorageSavingState(false));
         }, 500);
-    }, appConfig.localStorageSavingDuration);   // Debounced save function - will only execute 1.5 second after the user stops typing
+    }, appConfig.localStorageSavingDuration);   // Debounced save function - will only execute 0.5s second after the user stops typing
 
     const saveToLocalStorageAsync = useCallback(
         async (key: string, value: string): Promise<void> => {
@@ -91,9 +93,33 @@ export default function LocalStorageProvider({ children }: { children: ReactNode
         },
         [dispatch]
     );
+    
+    const deleteFromLocalStorage = useCallback(
+        async (key: string): Promise<void> => {
+            return new Promise<void>((resolve) => {
+                dispatch(setLoaclStorageSavingState(true));
+                try {
+                    if (typeof window !== 'undefined' && window.localStorage) {
+                        localStorage.removeItem(key);
+                    }
+                    resolve();
+                } catch (error) {
+                    console.error(`Error deleting ${key} from localStorage:`, error);
+                    resolve();
+                }
+                // Set saving loader duration 0.1 second
+                setTimeout(() => {
+                    dispatch(setLoaclStorageSavingState(false));
+                }, 100);
+            });
+        },
+        [dispatch]
+    );
+
+
 
     return (
-        <LocalStorageContext.Provider value={{ readFromLocalStorage, saveToLocalStorage, saveToLocalStorageAsync }}>
+        <LocalStorageContext.Provider value={{ readFromLocalStorage, saveToLocalStorage, saveToLocalStorageAsync, deleteFromLocalStorage }}>
             {children}
         </LocalStorageContext.Provider>
     );

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import UpdateSimulation from '@/components/simulations/UpdateSimulation';
 import { BsBoxArrowLeft, BsBoxArrowRight } from "react-icons/bs";
 import ScenarioFormSideBar from '@/components/simulations/ScenarioFormSideBar';
-import { DialogFlowEdge, DialogFlowNode } from '@/components/reactflow/utils';
+import { DialogFlowEdge, DialogFlowNode } from '@/components/reactflow/types';
 
 export default function Page() {
     const params = useParams();

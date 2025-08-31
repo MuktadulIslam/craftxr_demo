@@ -3,7 +3,8 @@
 import SimulationTree from '@/components/reactflow/SimulationTree';
 import { useGetSimulationChat } from "@/lib/hooks/simulationHook";
 import { useEffect, useState } from "react";
-import { DialogFlowEdge, getNodesAndEdges, DialogFlowNode } from "@/components/reactflow/utils";
+import { getNodesAndEdges } from "@/components/reactflow/utils";
+import { DialogFlowEdge, DialogFlowNode } from "@/components/reactflow/types";
 
 export default function ViewSimulation({ simulationID }: { simulationID: string }) {
     const { data: chatData } = useGetSimulationChat(simulationID);

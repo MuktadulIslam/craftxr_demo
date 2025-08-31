@@ -46,7 +46,6 @@ function SignUpContent() {
 
     const onSubmit = async (data: UserSignUpFormData) => {
         const { confirm_password, ...signUpData } = data;
-        console.log('Form submitted:', signUpData);
 
         signUpMutation.mutate({
             credentials: signUpData as SignUpCredentials,

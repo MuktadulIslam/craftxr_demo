@@ -1,62 +1,8 @@
 "use client"
-import { SimulationChatType, SimulationOutcomeState } from '@/types/simulationChat';
-import { CSSProperties } from 'react';
+import { SimulationChatType } from '@/types/simulationChat';
 import { nanoid } from 'nanoid';
-import { Node } from '@xyflow/react';
+import { DialogFlowEdge, DialogFlowNode} from './types';
 
-export interface DialogNodeData {
-    label: 'Avatar' | 'Human',
-    dialog: string,
-    outcome_state: SimulationOutcomeState,
-    intent: string,
-    topic: string,
-    speaker: 'A' | 'V',
-    chat_level: `L${number}`,
-    simulation_chat_id?: string,
-    isFirstNode: boolean,
-    editable: boolean;
-    allowToAddNewDialog: boolean;
-    allowToRemoveDialog: boolean;
-    allowToUpdateDialog: boolean;
-    [key: string]: unknown; // Add this index signature
-}
-
-export interface DialogEditPayload {
-    dialog: string,
-    intent: string,
-    topic: string,
-    outcome_state: SimulationOutcomeState,
-    simulation_chat_id: string | undefined
-}
-
-export interface DialogFlowNode extends Node<DialogNodeData> {
-    id: string;
-    type: 'dialogNode';
-    position: { x: number; y: number };
-    data: DialogNodeData;
-    width?: number; // Added for layout calculation
-}
-
-export interface InteractiveDialogNodeData extends DialogNodeData {
-    onAddNode: (parentId: string, nodeType: string) => void,
-    onDeleteNode: (nodeId: string) => void,
-    onEditNode: (nodeId: string, updatedData: DialogEditPayload) => void,
-}
-
-export interface InteractiveDialogNode {
-    id: string,
-    type: 'dialogNode',
-    position: { x: number, y: number },
-    data: InteractiveDialogNodeData,
-}
-
-export interface DialogFlowEdge {
-    id: string,
-    source: string,
-    target: string,
-    animated: true | false,
-    style?: CSSProperties,
-}
 
 function generateId() {
     return `<<react-flow-${nanoid(10)}>>`;
@@ -74,9 +20,6 @@ function calculateSubtreeSizes(chat: SimulationChatType): number {
     for (const subchat of chat.subchat) {
         totalWidth += calculateSubtreeSizes(subchat);
     }
-    
-    // Add a slight padding multiplier to create more space between different parent's children
-    // The multiplier is small (1.2) to avoid excessive spacing
     return Math.max(1, totalWidth) * 1.05;
 }
 

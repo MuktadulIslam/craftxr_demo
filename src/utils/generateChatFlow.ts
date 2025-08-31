@@ -1,4 +1,4 @@
-import { DialogFlowEdge, DialogFlowNode } from "@/components/reactflow/utils";
+import { DialogFlowEdge, DialogFlowNode } from "@/components/reactflow/types";
 import { RawScenarioChat } from "@/types/simulationChat";
 
 export function convertFlowToChat(

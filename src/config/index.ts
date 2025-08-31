@@ -4,7 +4,7 @@ export const backendBaseURL = "https://api.craftxr.io/api/"
 export const config = {
   backendBaseURL: "https://api.craftxr.io/api/",
   timeout: 120000,     // the frontend system will wait maximum to 120 second for the respons 
-  localStorageSavingDuration: 1000, // 1 seconds
+  localStorageSavingDuration: 500, // 0.5 seconds
   app: {
     name: 'CraftXR',
   },

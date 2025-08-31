@@ -1,4 +1,5 @@
 "use client"
+import '@xyflow/react/dist/style.css';
 import {
     ReactFlow,
     useNodesState,
@@ -11,9 +12,9 @@ import {
     Connection
 } from '@xyflow/react';
 
-import '@xyflow/react/dist/style.css';
 
-import { DialogFlowEdge, DialogFlowNode, DialogEditPayload } from "./utils";
+import { DialogFlowEdge, DialogFlowNode } from "./types";
+import { DialogEditPayload } from "./types";
 import { useCallback, useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import DialogNodeView from './DialogNodeView';

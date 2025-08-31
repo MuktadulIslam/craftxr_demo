@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react";
-import { InteractiveDialogNodeData } from "./utils";
+import { InteractiveDialogNodeData } from "./types";
 import { FaPlus } from "react-icons/fa6";
 import { RiPencilFill } from "react-icons/ri";
 import { CgClose } from "react-icons/cg";

@@ -93,7 +93,6 @@ export default function ViewEvalutions() {
     useEffect(() => {
         if (evaluationData) {
             setEvaluation(evaluationData);
-            // console.log(evaluationData)
         }
     }, [evaluationData]);
 
