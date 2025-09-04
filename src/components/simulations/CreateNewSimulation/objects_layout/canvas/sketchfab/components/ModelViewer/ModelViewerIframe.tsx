@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import { SketchfabModel } from '../../types';
 
-export default function ModelViewerIframe({ model }: { model: SketchfabModel }) {
+const ModelViewerIframe = memo(function ModelViewerIframe({ model }: { model: SketchfabModel }) {
     return (
         <div className="flex-1 relative">
             <iframe
@@ -12,4 +13,6 @@ export default function ModelViewerIframe({ model }: { model: SketchfabModel }) 
             />
         </div>
     );
-}
+});
+
+export default ModelViewerIframe;

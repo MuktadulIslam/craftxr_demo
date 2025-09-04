@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import * as THREE from 'three'
 import { FaRotateLeft, FaRotateRight } from "react-icons/fa6";
 import { useMeshContext } from '../context/MeshContext';
 
-export default function ObjectControls() {
+const ObjectControls = memo(function ObjectControls() {
   const { selectedObject, selectedObjectId, removeObject, clearObject, fixedRingRadius } = useMeshContext();
   const [scale, setScale] = useState<[number, number, number]>([1, 1, 1]);
   const [rotation, setRotation] = useState<[number, number, number]>([0, 0, 0]);
@@ -47,7 +47,7 @@ export default function ObjectControls() {
   }, [handleClose]);
 
 
-  const updateObjectPosition = () => {
+  const updateObjectPosition = useCallback(() => {
     if (!selectedObject) return;
 
     const box = new THREE.Box3().setFromObject(selectedObject)
@@ -55,9 +55,9 @@ export default function ObjectControls() {
     box.getSize(size)
     const minEdge = box.min.clone();
     selectedObject.position.y -= minEdge.y;
-  }
+  }, [selectedObject]);
 
-  const handleScaleChange = (axis: number, value: number) => {
+  const handleScaleChange = useCallback((axis: number, value: number) => {
     const clampedValue = Math.max(MIN_SCALE, Math.min(MAX_SCALE, value));
     const newScale = [...scale] as [number, number, number];
     newScale[axis] = clampedValue;
@@ -73,16 +73,16 @@ export default function ObjectControls() {
         fixedRingRadius();
       }
     }
-  };
+  }, [selectedObject, MAX_SCALE, MIN_SCALE, fixedRingRadius, scale, updateObjectPosition]);
 
   // Normalize rotation to keep it within -360 to 360 degrees
-  const normalizeRotation = (degrees: number): number => {
+  const normalizeRotation = useCallback((degrees: number): number => {
     while (degrees > 360) degrees -= 360;
     while (degrees < -360) degrees += 360;
     return degrees;
-  };
+  }, []);
 
-  const handleRotationChange = (axis: number, value: number) => {
+  const handleRotationChange = useCallback((axis: number, value: number) => {
     const normalizedDegrees = normalizeRotation(value);
     const radians = (normalizedDegrees * Math.PI) / 180;
     const newRotation = [...rotation] as [number, number, number];
@@ -99,18 +99,18 @@ export default function ObjectControls() {
         fixedRingRadius();
       }
     }
-  };
+  }, [selectedObject, rotation, updateObjectPosition, fixedRingRadius, normalizeRotation]);
 
-  const handleQuickRotation = (axis: number, clockwise: boolean) => {
+  const handleQuickRotation = useCallback((axis: number, clockwise: boolean) => {
     const currentRotationDegrees = (rotation[axis] * 180) / Math.PI;
     const newRotationDegrees = clockwise
       ? Math.round((currentRotationDegrees + 90) / 90) * 90
       : Math.round((currentRotationDegrees - 90) / 90) * 90;
 
     handleRotationChange(axis, newRotationDegrees);
-  };
+  }, [handleRotationChange, rotation]);
 
-  const handleUniformScale = (value: number) => {
+  const handleUniformScale = useCallback((value: number) => {
     const clampedValue = Math.max(MIN_SCALE, Math.min(MAX_SCALE, value));
     const newScale: [number, number, number] = [clampedValue, clampedValue, clampedValue];
     setScale(newScale);
@@ -125,9 +125,9 @@ export default function ObjectControls() {
       }
 
     }
-  };
+  }, [MIN_SCALE, MAX_SCALE, selectedObject, updateObjectPosition, fixedRingRadius]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     const resetScale: [number, number, number] = [1, 1, 1];
     const resetRotation: [number, number, number] = [0, 0, 0];
 
@@ -144,9 +144,9 @@ export default function ObjectControls() {
         fixedRingRadius();
       }
     }
-  };
+  }, [selectedObject, updateObjectPosition, fixedRingRadius]);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (selectedObjectId && selectedObject) {
       // Remove from Three.js scene
       if (selectedObject.parent) {
@@ -168,12 +168,12 @@ export default function ObjectControls() {
       // Remove from objects array (this will also clear selection)
       removeObject(selectedObjectId);
     }
-  };
+  }, [selectedObjectId, selectedObject, removeObject]);
 
   return (
-    <div className="z-50 absolute top-[350px] right-5 text-white font-sans text-sm bg-gray-900/90 bg-opacity-90 p-5 rounded-lg w-[270px]">
+    <div className="z-50 absolute top-[290px] right-5 text-white font-sans text-sm bg-gray-900/90 bg-opacity-90 px-4 py-2 rounded-lg w-[270px]">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-bold">Object Controls</h3>
+        <h3 className="text-lg font-bold text-white">Object Controls</h3>
         <button
           onClick={handleClose}
           className="text-gray-400 hover:text-white transition-colors text-xl font-bold"
@@ -200,7 +200,7 @@ export default function ObjectControls() {
 
       {/* Individual Scale Controls */}
       <div className="mb-4">
-        <h4 className="text-sm font-medium mb-1">Individual Scale</h4>
+        <h4 className="text-sm font-medium mb-1 text-white">Individual Scale</h4>
         <div className="grid grid-cols-3 gap-3">
           {['X', 'Y', 'Z'].map((axis, index) => (
             <div key={axis}>
@@ -223,7 +223,7 @@ export default function ObjectControls() {
 
       {/* Quick 90° Rotation Controls */}
       <div className="mb-4">
-        <h4 className="text-sm font-medium mb-1">Quick Rotation (90°)</h4>
+        <h4 className="text-sm font-medium mb-1 text-white">Quick Rotation (90°)</h4>
         <div className="grid grid-cols-3 gap-3">
           {['X', 'Y', 'Z'].map((axis, index) => (
             <div key={axis} className="text-center">
@@ -251,7 +251,7 @@ export default function ObjectControls() {
 
       {/* Fine Rotation Controls */}
       <div className="mb-6">
-        <h4 className="text-sm font-medium mb-1">Fine Rotation (degrees)</h4>
+        <h4 className="text-sm font-medium mb-1 text-white">Fine Rotation (degrees)</h4>
         <div className="grid grid-cols-1 gap-1">
           {['X', 'Y', 'Z'].map((axis, index) => (
             <div key={axis} className="flex gap-1 items-center">
@@ -288,7 +288,7 @@ export default function ObjectControls() {
         </button>
       </div>
 
-      <div className="mt-3 text-xs text-gray-400 flex w-full h-auto justify-center">
+      <div className="mt-3 text-xs text-gray-400 w-full h-auto">
         <div>
           🔧 Double-click object to open controls<br />
           🔧 Alt+C to close the ObjectControls<br />
@@ -297,4 +297,6 @@ export default function ObjectControls() {
       </div>
     </div>
   );
-}
+});
+
+export default ObjectControls;

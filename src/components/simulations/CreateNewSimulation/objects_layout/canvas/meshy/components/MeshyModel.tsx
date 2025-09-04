@@ -1,11 +1,11 @@
 import { useGLTF, Html } from '@react-three/drei';
 import { useMeshyModelUrl } from '../hooks/useMeshyModelUrl';
 import { useModelCache } from '../hooks/useModelCache';
-import { Suspense, useMemo } from 'react';
+import { memo, Suspense, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 // Loading component for when the model is being fetched
-function ModelLoadingFallback() {
+const ModelLoadingFallback = memo(function ModelLoadingFallback() {
     return (
         <Html center>
             <div className="flex flex-col items-center justify-center text-white w-[200px]">
@@ -14,10 +14,10 @@ function ModelLoadingFallback() {
             </div>
         </Html>
     );
-}
+});
 
 // Error component for when model fetch fails
-function ModelErrorFallback() {
+const ModelErrorFallback = memo(function ModelErrorFallback() {
     return (
         <Html center>
             <div className="flex flex-col items-center justify-center text-red-400 w-[200px] text-center">
@@ -26,10 +26,10 @@ function ModelErrorFallback() {
             </div>
         </Html>
     );
-}
+});
 
 // Cached GLTF component that uses the cache
-function CachedGLTFModel({ meshyUrl, blobUrl }: { meshyUrl: string; blobUrl: string }) {
+const CachedGLTFModel = memo(function CachedGLTFModel({ meshyUrl, blobUrl }: { meshyUrl: string; blobUrl: string }) {
     const { setCachedModel } = useModelCache();
     const { scene } = useGLTF(blobUrl);
     useMemo(() => {
@@ -39,7 +39,7 @@ function CachedGLTFModel({ meshyUrl, blobUrl }: { meshyUrl: string; blobUrl: str
     }, [scene, meshyUrl, setCachedModel]);
 
     return <primitive object={scene} scale={1} />;
-}
+});
 
 interface MeshyModelProps {
     url: string;
@@ -47,7 +47,7 @@ interface MeshyModelProps {
 }
 
 // Updated Model component with comprehensive caching
-export default function MeshyModel({ url, setIsError }: MeshyModelProps) {
+const MeshyModel = memo(function MeshyModel({ url, setIsError }: MeshyModelProps) {
     const { getCachedModel } = useModelCache();
     // Move ALL hooks to the top level - they must always be called
     const { data: blobUrl, isLoading } = useMeshyModelUrl(url);
@@ -79,4 +79,6 @@ export default function MeshyModel({ url, setIsError }: MeshyModelProps) {
             </Suspense>
         </ErrorBoundary>
     );
-}
+});
+
+export default MeshyModel;

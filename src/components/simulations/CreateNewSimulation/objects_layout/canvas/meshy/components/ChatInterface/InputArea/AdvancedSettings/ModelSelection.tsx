@@ -2,7 +2,7 @@
 import { Sparkles, ChevronDown } from 'lucide-react';
 import { useMeshyChat } from "../../../../context/MeshyChatContext";
 import { modelOptions } from "./constent";
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, memo, SetStateAction } from 'react';
 
 
 interface ModelSelectionProps {
@@ -11,7 +11,7 @@ interface ModelSelectionProps {
     setShow: Dispatch<SetStateAction<boolean>>
 }
 
-export default function ModelSelection({ ref, show, setShow }: ModelSelectionProps) {
+const ModelSelection = memo(function ModelSelection({ ref, show, setShow }: ModelSelectionProps) {
     const { currentModel, setCurrentModel } = useMeshyChat();
     return (
         <div className="relative" ref={ref}>
@@ -49,4 +49,6 @@ export default function ModelSelection({ ref, show, setShow }: ModelSelectionPro
             )}
         </div>
     )
-}
+});
+
+export default ModelSelection;

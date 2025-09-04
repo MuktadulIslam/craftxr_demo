@@ -1,12 +1,13 @@
 import { Image as ImageIcon, X, Sparkles } from 'lucide-react';
 import { useMeshyChat } from "../../../context/MeshyChatContext";
 import Image from 'next/image';
+import { memo } from 'react';
 
 interface ImagePreviewProps {
     fileInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
-export default function ImagePreview({ fileInputRef }: ImagePreviewProps) {
+const ImagePreview = memo(function ImagePreview({ fileInputRef }: ImagePreviewProps) {
     const { currentImages, currentGenerationType, removeCurrentImage, currentRefineModelData, setCurrentRefineModelData } = useMeshyChat();
 
     const shouldShow = (currentGenerationType.value === 'text-to-3d' && (currentImages.length > 0 || currentRefineModelData) ||
@@ -25,8 +26,8 @@ export default function ImagePreview({ fileInputRef }: ImagePreviewProps) {
                     <div className="relative inline-block">
                         <div className="relative">
                             <Image
-                            width={100}
-                            height={100}
+                                width={100}
+                                height={100}
                                 src={currentRefineModelData.model_thumbnail_url}
                                 alt="Model to refine"
                                 className="w-16 h-16 object-cover rounded-lg border border-purple-400 bg-gray-800"
@@ -82,4 +83,6 @@ export default function ImagePreview({ fileInputRef }: ImagePreviewProps) {
             )} */}
         </div>
     );
-}
+});
+
+export default ImagePreview;

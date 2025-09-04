@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, memo, use, useCallback } from 'react';
 import { Send, Image as ImageIcon, X, Settings } from 'lucide-react';
 import { useMeshyChat } from '../../../context/MeshyChatContext';
 import { GenerationType, MeshyTextTo3DRequest, MeshyImageTo3DRequest, MeshyRefineRequest, MeshyModelVersion, } from '../../../types';
@@ -10,15 +10,14 @@ import { useGet3DFromImage } from '../../../hooks/get3DFromImage';
 import { useRefineModel } from '../../../hooks/getRefineModel';
 import ImagePreview from './ImagePreview';
 import ChatInput from './ChatInput';
+import { add } from 'lodash';
 
-export default function InputArea() {
+const InputArea = memo(function InputArea() {
     const {
-        messages,
         addMessage,
         updateMessage,
         currentModel,
         currentInput,
-        setCurrentInput,
         currentImages,
         addCurrentImage,
         clearCurrentImages,
@@ -34,13 +33,13 @@ export default function InputArea() {
 
     const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    
+
     // Mutation hooks
     const textTo3DMutation = useGet3DFromText();
     const imageTo3DMutation = useGet3DFromImage();
     const refineModelMutation = useRefineModel();
 
-    const processImageFile = (file: File): Promise<string> => {
+    const processImageFile = useCallback((file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
             // Check file size (max 10MB)
             if (file.size > 10 * 1024 * 1024) {
@@ -65,9 +64,9 @@ export default function InputArea() {
             };
             reader.readAsDataURL(file);
         });
-    };
+    }, []);
 
-    const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(event.target.files || []);
         if (files.length === 0) return;
 
@@ -98,9 +97,9 @@ export default function InputArea() {
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
-    };
+    }, [addCurrentImage, currentImages.length, processImageFile]);
 
-    const handleSubmit = async () => {
+    const handleSubmit = useCallback(async () => {
         if (!currentInput.trim() && currentImages.length === 0) return;
         if (isGenerating) return;
         clearCurrentImages();
@@ -181,10 +180,10 @@ export default function InputArea() {
             setIsGenerating(false);
             clearCurrentImages();
         }
-    };
+    }, [currentInput, currentImages, currentModel, currentArtStyle, currentSymmetry, currentGenerationType, currentRefineModelData]);
 
 
-    const getPlaceholder = () => {
+    const getPlaceholder = useCallback(() => {
         switch (currentGenerationType.value) {
             case 'text-to-3d':
                 return currentModel ?
@@ -197,7 +196,19 @@ export default function InputArea() {
             default:
                 return "Type your message...";
         }
-    };
+    }, [currentGenerationType, currentModel, currentImages]);
+
+    const getSuccessMessage = useCallback((type: GenerationType, modelVersion: MeshyModelVersion, imageCount: number): string => {
+        switch (type) {
+            case 'text-to-3d':
+                return `🎉 Your 3D model has been generated using ${modelVersion}! You can view it above, refine it further, or create something new.`;
+            case 'image-to-3d':
+                const imageText = imageCount > 1 ? `${imageCount} images` : 'your image';
+                return `📸 Successfully converted ${imageText} to a 3D model using ${modelVersion}! Feel free to refine it or upload more images.`;
+            default:
+                return `✅ Generation complete using ${modelVersion}!`;
+        }
+    }, []);
 
     return (
         <div className="w-full h-auto p-2 border-t border-white/10">
@@ -215,7 +226,7 @@ export default function InputArea() {
                 <div className="px-2 py-1.5 grow-0 flex items-center gap-2 text-xs text-gray-400 border-t border-white/10">
                     <div className='space-x-2'>
                         {/* Image Upload Button */}
-                        {(currentGenerationType.value === 'image-to-3d' ||  currentRefineModelData) && (
+                        {(currentGenerationType.value === 'image-to-3d' || currentRefineModelData) && (
                             <button
                                 onClick={() => fileInputRef.current?.click()}
                                 className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
@@ -268,16 +279,5 @@ export default function InputArea() {
             />
         </div>
     );
-}
-
-function getSuccessMessage(type: GenerationType, modelVersion: MeshyModelVersion, imageCount: number): string {
-    switch (type) {
-        case 'text-to-3d':
-            return `🎉 Your 3D model has been generated using ${modelVersion}! You can view it above, refine it further, or create something new.`;
-        case 'image-to-3d':
-            const imageText = imageCount > 1 ? `${imageCount} images` : 'your image';
-            return `📸 Successfully converted ${imageText} to a 3D model using ${modelVersion}! Feel free to refine it or upload more images.`;
-        default:
-            return `✅ Generation complete using ${modelVersion}!`;
-    }
-}
+});
+export default InputArea;

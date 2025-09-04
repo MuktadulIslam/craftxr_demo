@@ -4,11 +4,32 @@ import { FaBoxesStacked } from "react-icons/fa6";
 import { PiDownloadSimpleBold } from "react-icons/pi";
 import { SiAdobecreativecloud } from "react-icons/si";
 import { useSketchfabAuth } from "../context/SketchfabAuthContext";
+import { memo, useCallback } from "react";
 
-export default function SketchfabLogin() {
+interface FeatureCardProps {
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+    bgColor: string;
+    textColor: string;
+}
+
+const FeatureCard = memo(function FeatureCard({ icon, title, description, bgColor, textColor }: FeatureCardProps) {
+    return (
+        <div className="text-center">
+            <div className={`${bgColor} ${textColor} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}>
+                {icon}
+            </div>
+            <h3 className="text-lg font-semibold mb-2">{title}</h3>
+            <p className="text-sm text-gray-600">{description}</p>
+        </div>
+    );
+});
+
+const SketchfabLogin = memo(function SketchfabLogin() {
     const { checkAuth } = useSketchfabAuth();
 
-    const handleLogin = (e: React.MouseEvent) => {
+    const handleLogin = useCallback((e: React.MouseEvent) => {
         e.preventDefault();
         const width = 600;
         const height = 500;
@@ -29,7 +50,7 @@ export default function SketchfabLogin() {
                 }
             }, 1000);
         }
-    };
+    }, [checkAuth]);
 
     return (
         <div className="w-full pt-32 px-4">
@@ -67,24 +88,6 @@ export default function SketchfabLogin() {
             </div>
         </div>
     );
-}
+});
 
-interface FeatureCardProps {
-    icon: React.ReactNode;
-    title: string;
-    description: string;
-    bgColor: string;
-    textColor: string;
-}
-
-function FeatureCard({ icon, title, description, bgColor, textColor }: FeatureCardProps) {
-    return (
-        <div className="text-center">
-            <div className={`${bgColor} ${textColor} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}>
-                {icon}
-            </div>
-            <h3 className="text-lg font-semibold mb-2">{title}</h3>
-            <p className="text-sm text-gray-600">{description}</p>
-        </div>
-    );
-}
+export default SketchfabLogin;

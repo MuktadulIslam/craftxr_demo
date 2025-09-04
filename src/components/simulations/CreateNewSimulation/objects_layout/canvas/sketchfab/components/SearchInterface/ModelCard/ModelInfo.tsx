@@ -1,8 +1,9 @@
 import { Download, Heart, Eye, } from 'lucide-react';
 import Image from 'next/image';
 import { SketchfabModel } from '../../../types';
+import { memo } from 'react';
 
-export default function ModelInfo({ model }: { model: SketchfabModel }) {
+const ModelInfo = memo(function ModelInfo({ model }: { model: SketchfabModel }) {
     const formatNumber = (num: number | undefined): string => {
         if (num === undefined || num === null) return '0';
         if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -63,4 +64,6 @@ export default function ModelInfo({ model }: { model: SketchfabModel }) {
         </div>
 
     )
-}
+});
+
+export default ModelInfo;

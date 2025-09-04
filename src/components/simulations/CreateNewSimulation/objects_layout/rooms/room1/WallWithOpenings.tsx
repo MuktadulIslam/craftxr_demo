@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Plane } from '@react-three/drei';
 import { WallWithOpeningsProps, WallType } from './types';
 import WindowComponent from './Window';
@@ -67,7 +67,7 @@ const isWithinWallBounds = (
   );
 };
 
-export default function WallWithOpenings({
+const WallWithOpenings = memo(function WallWithOpenings({
   wall,
   roomWidth,
   roomLength,
@@ -151,4 +151,6 @@ export default function WallWithOpenings({
       ))}
     </group>
   );
-}
+});
+
+export default WallWithOpenings;

@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { SketchfabModel } from '../../../types';
 import AddToSidebarOverlay from './AddToSidebarOverlay';
+import { memo } from 'react';
 
 interface ModelCardThumbnailProps {
     model: SketchfabModel;
@@ -9,7 +10,7 @@ interface ModelCardThumbnailProps {
     isAlreadyInSidebar: boolean;
 }
 
-export default function ModelCardThumbnail({ model, isThisModelAddingToSidebar, addToSidebarProgress, isAlreadyInSidebar }: ModelCardThumbnailProps) {
+const ModelCardThumbnail = memo(function ModelCardThumbnail({ model, isThisModelAddingToSidebar, addToSidebarProgress, isAlreadyInSidebar }: ModelCardThumbnailProps) {
     return (
         <div className="relative aspect-square overflow-hidden">
             {model.thumbnails?.images?.[0]?.url ? (
@@ -43,4 +44,6 @@ export default function ModelCardThumbnail({ model, isThisModelAddingToSidebar, 
             )}
         </div>
     );
-}
+});
+
+export default ModelCardThumbnail;

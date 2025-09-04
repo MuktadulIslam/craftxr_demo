@@ -3,6 +3,7 @@
 import { MeshyChatProvider } from './context/MeshyChatContext';
 import MeshyHeader from './MeshyHeader';
 import ChatInterface from './components/ChatInterface';
+import { memo } from 'react';
 
 interface MeshySideBarProps {
     show: boolean;
@@ -16,7 +17,7 @@ interface MeshySideBarProps {
     }) => void;
 }
 
-function MeshySideBarContent({ show, setShow, onAddModelToSidebar }: MeshySideBarProps) {
+const MeshySideBarContent = memo(function MeshySideBarContent({ show, setShow, onAddModelToSidebar }: MeshySideBarProps) {
     return (
         <div className={`h-full w-[800px] ${show ? '' : '-translate-x-full'} transition-all duration-300 absolute left-0 top-0 bottom-0 z-50 backdrop-blur-sm`}>
             <div className="w-full h-full flex flex-col overflow-hidden">
@@ -28,12 +29,13 @@ function MeshySideBarContent({ show, setShow, onAddModelToSidebar }: MeshySideBa
             </div>
         </div>
     );
-}
+});
 
-export default function MeshySideBar(props: MeshySideBarProps) {
+const MeshySideBar = memo(function MeshySideBar(props: MeshySideBarProps) {
     return (
         <MeshyChatProvider>
             <MeshySideBarContent {...props} />
         </MeshyChatProvider>
     );
-}
+})
+export default MeshySideBar;

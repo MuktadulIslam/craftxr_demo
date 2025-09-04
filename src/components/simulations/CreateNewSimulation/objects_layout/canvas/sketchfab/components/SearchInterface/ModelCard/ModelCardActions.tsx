@@ -1,5 +1,6 @@
 import { ExternalLink, Download, Play, Plus } from 'lucide-react';
 import { SketchfabModel } from '../../../types';
+import { memo } from 'react';
 
 interface ModelCardActionsProps {
     model: SketchfabModel;
@@ -11,7 +12,7 @@ interface ModelCardActionsProps {
     isAlreadyInSidebar: boolean;
 }
 
-export default function ModelCardActions({
+const ModelCardActions = memo(function ModelCardActions({
     model,
     onModelSelect,
     onDownloadModel,
@@ -73,4 +74,6 @@ export default function ModelCardActions({
             </a>
         </div>
     );
-}
+});
+
+export default ModelCardActions;

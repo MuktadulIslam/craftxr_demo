@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Plane } from '@react-three/drei';
 import { Door } from './types';
 
@@ -14,7 +14,7 @@ interface DoorComponentProps {
   wall: 'front' | 'back' | 'left' | 'right';
 }
 
-export default function DoorComponent({ door, wallSpec, wall }: DoorComponentProps) {
+const DoorComponent = memo(function DoorComponent({ door, wallSpec, wall }: DoorComponentProps) {
   // Calculate position relative to wall center
   const relativeX = door.fromLeftSide + (door.width / 2) - (wallSpec.wallLength / 2);
   const relativeY = door.fromFloor + (door.height / 2);
@@ -303,4 +303,6 @@ export default function DoorComponent({ door, wallSpec, wall }: DoorComponentPro
       </Plane>
     </group>
   );
-};
+});
+
+export default DoorComponent;

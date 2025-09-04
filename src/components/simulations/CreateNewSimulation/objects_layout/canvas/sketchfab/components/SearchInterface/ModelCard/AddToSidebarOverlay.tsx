@@ -1,8 +1,10 @@
+import { memo } from "react";
+
 interface AddToSidebarOverlayProps {
     progress: number;
 }
 
-export default function AddToSidebarOverlay({ progress }: AddToSidebarOverlayProps) {
+const AddToSidebarOverlay = memo(function AddToSidebarOverlay({ progress }: AddToSidebarOverlayProps) {
     return (
         <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center">
             <div className="w-16 h-16 relative mb-2">
@@ -34,4 +36,6 @@ export default function AddToSidebarOverlay({ progress }: AddToSidebarOverlayPro
             <span className="text-white text-sm font-medium">Adding to Sidebar...</span>
         </div>
     );
-}
+});
+
+export default AddToSidebarOverlay;

@@ -5,7 +5,7 @@ import { ChatMessage as ChatMessageType, Meshy3DObjectResponse } from '../../typ
 import AddToSidebarButton from '../AddToSidebarButton';
 import { ModelViewer } from '../ModelViewer';
 import { useMeshyChat } from '../../context/MeshyChatContext';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 interface AIMessageProps {
     message: ChatMessageType;
@@ -22,7 +22,7 @@ export default function AIMessage({ message, onAddToSidebar }: AIMessageProps) {
     const { current3DModel, setCurrentRefineModelData } = useMeshyChat();
     const [isError, setIsError] = useState<boolean>(false);
 
-    const handleDownload = (model: Meshy3DObjectResponse, format: 'glb' | 'fbx' | 'obj') => {
+    const handleDownload = useCallback((model: Meshy3DObjectResponse, format: 'glb' | 'fbx' | 'obj') => {
         const url = model.model_urls?.[format];
         if (url) {
             const link = document.createElement('a');
@@ -32,19 +32,19 @@ export default function AIMessage({ message, onAddToSidebar }: AIMessageProps) {
             link.click();
             document.body.removeChild(link);
         }
-    };
+    }, []);
 
-    const formatTimestamp = (date: Date) => {
+    const formatTimestamp = useCallback ((date: Date) => {
         return date.toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
             hour12: false
         });
-    };
+    }, []);
 
-    const needsRefinement = (model: Meshy3DObjectResponse): boolean => {
+    const needsRefinement = useCallback((model: Meshy3DObjectResponse): boolean => {
         return !model.texture_urls || model.texture_urls.length === 0;
-    };
+    }, []);
 
     return (
         <div className="flex gap-3 flex-row">

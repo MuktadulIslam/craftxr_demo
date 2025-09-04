@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Plus, Check, Loader2 } from 'lucide-react';
 import { Meshy3DObjectResponse } from '../types';
 
@@ -17,7 +17,7 @@ interface AddToSidebarButtonProps {
     className?: string;
 }
 
-export default function AddToSidebarButton({
+const AddToSidebarButton = memo(function AddToSidebarButton({
     model,
     onAddToSidebar,
     isAdded = false,
@@ -86,4 +86,6 @@ export default function AddToSidebarButton({
             )}
         </button>
     );
-}
+});
+
+export default AddToSidebarButton;

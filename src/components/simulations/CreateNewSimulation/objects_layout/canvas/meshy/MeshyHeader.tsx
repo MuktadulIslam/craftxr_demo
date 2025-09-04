@@ -1,5 +1,6 @@
 import { X, Bot } from 'lucide-react';
 import { EB_Garamond } from 'next/font/google';
+import { memo } from 'react';
 
 const ebGaramond = EB_Garamond({
     subsets: ['latin'],
@@ -10,7 +11,7 @@ interface MeshyHeaderProps {
     setShow: (show: boolean) => void;
 }
 
-export default function MeshyHeader({ setShow }: MeshyHeaderProps) {
+const MeshyHeader = memo(function MeshyHeader({ setShow }: MeshyHeaderProps) {
 
     return (
         <>
@@ -44,4 +45,6 @@ export default function MeshyHeader({ setShow }: MeshyHeaderProps) {
             </div>
         </>
     );
-}
+});
+
+export default MeshyHeader;

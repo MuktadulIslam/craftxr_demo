@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { SketchfabModel } from "../../types";
 import SearchBar from "./SearchBar";
 import ModelGrid from "./ModelGrid";
@@ -17,7 +17,7 @@ interface SearchInterfaceProps {
     existingModelUids: string[];
 }
 
-export default function SearchInterface({
+const SearchInterface = memo(function SearchInterface({
     onModelSelect,
     onDownloadModel,
     onAddToSidebar,
@@ -81,4 +81,6 @@ export default function SearchInterface({
             />
         </>
     );
-}
+});
+
+export default SearchInterface;

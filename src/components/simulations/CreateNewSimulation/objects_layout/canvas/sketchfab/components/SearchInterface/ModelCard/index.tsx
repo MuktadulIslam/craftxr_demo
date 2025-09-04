@@ -2,6 +2,7 @@ import { SketchfabModel } from '../../../types';
 import ModelCardThumbnail from './ModelCardThumbnail';
 import ModelCardActions from './ModelCardActions';
 import ModelInfo from './ModelInfo';
+import { memo, useCallback } from 'react';
 
 interface ModelCardProps {
     model: SketchfabModel;
@@ -14,7 +15,7 @@ interface ModelCardProps {
     isAlreadyInSidebar?: boolean;
 }
 
-export default function ModelCard({
+const ModelCard = memo(function ModelCard({
     model,
     onModelSelect,
     onDownloadModel,
@@ -27,9 +28,9 @@ export default function ModelCard({
     const isThisModelDownloading = downloadingModelId === model.uid;
     const isThisModelAddingToSidebar = addingToSidebarId === model.uid;
 
-    const formatDate = (dateString: string): string => {
+    const formatDate = useCallback((dateString: string): string => {
         return new Date(dateString).toLocaleDateString();
-    };
+    }, []);
 
     return (
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl">
@@ -58,4 +59,6 @@ export default function ModelCard({
             </div>
         </div>
     );
-}
+});
+
+export default ModelCard;

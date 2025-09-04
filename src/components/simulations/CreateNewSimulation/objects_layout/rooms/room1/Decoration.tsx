@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Plane } from '@react-three/drei';
 import { WallDecoration } from './types';
 
@@ -14,7 +14,7 @@ interface DecorationComponentProps {
   wall: 'front' | 'back' | 'left' | 'right';
 }
 
-export default function DecorationComponent({ decoration, wallSpec, wall }: DecorationComponentProps) {
+const DecorationComponent = memo(function DecorationComponent({ decoration, wallSpec, wall }: DecorationComponentProps) {
   // Calculate position relative to wall center
   const relativeX = decoration.fromLeftSide + (decoration.width / 2) - (wallSpec.wallLength / 2);
   const relativeY = decoration.fromFloor + (decoration.height / 2);
@@ -39,4 +39,6 @@ export default function DecorationComponent({ decoration, wallSpec, wall }: Deco
       <meshStandardMaterial color={decoration.color || "#FFD700"} />
     </Plane>
   );
-};
+});
+
+export default DecorationComponent;

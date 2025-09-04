@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense, } from 'react';
+import React, { useState, useEffect, Suspense, memo, } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, } from '@react-three/drei';
 import Room from '../rooms/room1/Room';
@@ -134,13 +134,14 @@ function Room3DCanvasContent() {
     );
 };
 
-export default function Room3DCanvas() {
-    console.log("Hello world")
+const Room3DCanvas = memo(function Room3DCanvas() {
     return (
-        // <RoomProvider initialDimensions={{ width: 20, length: 25, height: 5 }}>
-        //     <MeshProvider>
+        <RoomProvider initialDimensions={{ width: 20, length: 25, height: 5 }}>
+            <MeshProvider>
                 <Room3DCanvasContent />
-        //     </MeshProvider>
-        // </RoomProvider>
+            </MeshProvider>
+        </RoomProvider>
     );
-}
+});
+
+export default Room3DCanvas;

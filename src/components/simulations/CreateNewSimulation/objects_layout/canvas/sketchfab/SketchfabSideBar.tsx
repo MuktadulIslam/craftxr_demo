@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, memo } from "react";
 import { SketchfabProvider } from "./context/SketchfabProvider";
 import { useSketchfabAuth } from "./context/SketchfabAuthContext";
 import { useSketchfabDownload } from "./context/SketchfabDownloadContext";
@@ -32,7 +32,7 @@ interface NotificationData {
     duration?: number;
 }
 
-function SketchfabSideBarContent({ show, setShow, onAddModelToSidebar, existingModelUids = [] }: SketchfabSideBarProps) {
+const SketchfabSideBarContent = memo(function SketchfabSideBarContent({ show, setShow, onAddModelToSidebar, existingModelUids = [] }: SketchfabSideBarProps) {
     const [selectedModel, setSelectedModel] = useState<SketchfabModel | null>(null);
     const [downloadingModelId, setDownloadingModelId] = useState<string | null>(null);
     const [addingToSidebarId, setAddingToSidebarId] = useState<string | null>(null);
@@ -149,9 +149,9 @@ function SketchfabSideBarContent({ show, setShow, onAddModelToSidebar, existingM
                 {!loading && authenticated && (
                     <SketchfabAuthHeader onNotify={addNotification} />
                 )}
-                
+
                 <SketchfabHeader setShow={setShow} />
-                
+
                 {loading ? (
                     <LoadingSpinner />
                 ) : !authenticated ? (
@@ -170,9 +170,9 @@ function SketchfabSideBarContent({ show, setShow, onAddModelToSidebar, existingM
             </div>
         </div>
     );
-}
+});
 
-function LoadingSpinner() {
+const LoadingSpinner = memo(function LoadingSpinner() {
     return (
         <div className="h-full w-full flex flex-col justify-center items-center text-gray-800">
             <div className="mb-4">
@@ -187,12 +187,14 @@ function LoadingSpinner() {
             </div>
         </div>
     );
-}
+});
 
-export default function SketchfabSideBar(props: SketchfabSideBarProps) {
+const SketchfabSideBar = memo(function SketchfabSideBar(props: SketchfabSideBarProps) {
     return (
         <SketchfabProvider>
             <SketchfabSideBarContent {...props} />
         </SketchfabProvider>
     );
-}
+});
+
+export default SketchfabSideBar;

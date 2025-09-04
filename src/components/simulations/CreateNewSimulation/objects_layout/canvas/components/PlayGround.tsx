@@ -1,6 +1,6 @@
 import { useThree } from "@react-three/fiber"
 import { PlacedObject } from "../types"
-import { Suspense, useEffect, useRef } from "react"
+import { memo, Suspense, use, useCallback, useEffect, useRef } from "react"
 import * as THREE from 'three'
 import DraggableObject from "./DraggableObject"
 import React from "react"
@@ -17,7 +17,7 @@ interface PlayGroundProps {
     children: React.ReactNode;
 }
 
-export default function PlayGround({
+const PlayGround = memo(function PlayGround({
     currentObject,
     setCurrentObject,
     setOrbitEnabled,
@@ -81,13 +81,13 @@ export default function PlayGround({
     }, [currentObject, setCurrentObject, camera, raycaster, gl, addObject]);
 
     // Handle floor click to deselect objects
-    const handleFloorClick = (event: React.MouseEvent) => {
+    const handleFloorClick = useCallback((event: React.MouseEvent) => {
         // Stop event propagation to prevent conflicts with object selection
         event.stopPropagation();
 
         // Clear the selected object
         clearObject();
-    };
+    }, [clearObject]);
 
     return (
         <>
@@ -122,4 +122,6 @@ export default function PlayGround({
             </mesh>
         </>
     );
-}
+});
+
+export default PlayGround;

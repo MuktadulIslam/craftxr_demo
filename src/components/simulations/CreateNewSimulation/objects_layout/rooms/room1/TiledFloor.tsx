@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Plane } from '@react-three/drei';
 import { TiledFloorProps, FloorTileProps } from './types';
 
@@ -18,7 +18,7 @@ function FloorTile({ position, isAlternate, color, alternateColor }: FloorTilePr
 }
 
 // Tiled floor component
-export default function TiledFloor({ width, length, color, alternateColor }: TiledFloorProps) {
+const TiledFloor = memo(function TiledFloor({ width, length, color, alternateColor }: TiledFloorProps) {
   const tiles: React.JSX.Element[] = [];
   const safeAlternateColor = alternateColor ?? "#cccccc";
 
@@ -40,5 +40,7 @@ export default function TiledFloor({ width, length, color, alternateColor }: Til
     }
   }
 
-  return <group position={[0,0,0]}>{tiles}</group>;
-};
+  return <group position={[0, 0, 0]}>{tiles}</group>;
+});
+
+export default TiledFloor;

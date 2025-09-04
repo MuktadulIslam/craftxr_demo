@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useRef } from "react";
+import { Dispatch, memo, SetStateAction, useRef } from "react";
 
 interface SidebarHeaderProps {
     setShowSketchfabSearch: Dispatch<SetStateAction<boolean>>;
@@ -6,7 +6,7 @@ interface SidebarHeaderProps {
     onFileUpload: (file: File) => void;
 }
 
-export default function SidebarHeader({
+const SidebarHeader = memo(function SidebarHeader({
     setShowSketchfabSearch,
     setShowMeshyGeneration,
     onFileUpload
@@ -119,4 +119,6 @@ export default function SidebarHeader({
             </div>
         </>
     );
-}
+});
+
+export default SidebarHeader;

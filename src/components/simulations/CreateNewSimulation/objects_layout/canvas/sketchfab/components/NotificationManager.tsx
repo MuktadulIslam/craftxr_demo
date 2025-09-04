@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { CheckCircle, X, AlertCircle } from 'lucide-react';
 
 interface NotificationData {
@@ -17,7 +17,7 @@ interface NotificationProps {
     onClose: () => void;
 }
 
-function Notification({ message, type, duration = 3000, onClose }: NotificationProps) {
+const Notification = memo(function Notification({ message, type, duration = 3000, onClose }: NotificationProps) {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
@@ -31,7 +31,7 @@ function Notification({ message, type, duration = 3000, onClose }: NotificationP
         return () => clearTimeout(timer);
     }, [duration, onClose]);
 
-    const getIcon = () => {
+    const getIcon = useCallback((type: string) => {
         switch (type) {
             case 'success':
                 return <CheckCircle size={20} className="text-green-500" />;
@@ -41,9 +41,9 @@ function Notification({ message, type, duration = 3000, onClose }: NotificationP
             default:
                 return <AlertCircle size={20} className="text-blue-500" />;
         }
-    };
+    }, []);
 
-    const getColorClasses = () => {
+    const getColorClasses = useCallback((type: string) => {
         switch (type) {
             case 'success':
                 return 'bg-green-500 border-green-700 text-green-100';
@@ -53,15 +53,15 @@ function Notification({ message, type, duration = 3000, onClose }: NotificationP
             default:
                 return 'bg-blue-500 border-blue-700 text-blue-100';
         }
-    };
+    }, []);
 
     return (
         <div
             className={`fixed top-4 right-4 z-[9999] transition-all duration-300 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
                 }`}
         >
-            <div className={`flex items-center gap-3 px-4 py-3 rounded-lg border backdrop-blur-md ${getColorClasses()}`}>
-                {getIcon()}
+            <div className={`flex items-center gap-3 px-4 py-3 rounded-lg border backdrop-blur-md ${getColorClasses(type)}`}>
+                {getIcon(type)}
                 <span className="text-sm font-medium">{message}</span>
                 <button
                     onClick={() => {
@@ -75,14 +75,14 @@ function Notification({ message, type, duration = 3000, onClose }: NotificationP
             </div>
         </div>
     );
-}
+});
 
 interface NotificationManagerProps {
     notifications: NotificationData[];
     removeNotification: (id: string) => void;
 }
 
-export default function NotificationManager({ notifications, removeNotification }: NotificationManagerProps) {
+const NotificationManager = memo(function NotificationManager({ notifications, removeNotification }: NotificationManagerProps) {
     return (
         <div className="fixed top-4 right-4 z-[9999] space-y-2">
             {notifications.map((notification) => (
@@ -96,4 +96,6 @@ export default function NotificationManager({ notifications, removeNotification 
             ))}
         </div>
     );
-}
+});
+
+export default NotificationManager;

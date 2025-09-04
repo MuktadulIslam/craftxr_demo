@@ -1,5 +1,6 @@
 import { Download, X, Plus } from 'lucide-react';
 import { SketchfabModel } from '../../types';
+import { memo } from 'react';
 
 interface ModelViewerHeaderProps {
     model: SketchfabModel;
@@ -10,7 +11,7 @@ interface ModelViewerHeaderProps {
     isAlreadyInSidebar: boolean;
 }
 
-export default function ModelViewerHeader({
+const ModelViewerHeader = memo(function ModelViewerHeader({
     model,
     handleAddToSidebar,
     handleDownloadModel,
@@ -81,4 +82,6 @@ export default function ModelViewerHeader({
             </div>
         </div>
     );
-}
+});
+
+export default ModelViewerHeader;

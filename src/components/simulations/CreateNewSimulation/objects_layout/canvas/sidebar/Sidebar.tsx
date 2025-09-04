@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo, memo, useEffect } from "react"
 import SketchfabSideBar from '../sketchfab/SketchfabSideBar';
 import MeshySideBar from '../meshy/MeshySideBar';
 import SidebarHeader from "./SidebarHeader"
@@ -21,13 +21,18 @@ interface UploadedFile {
     isMeshyUrl?: boolean;
 }
 
-export default function Sidebar(
+const Sidebar = memo(function Sidebar(
     { visible, onDragStart }:
         { visible: boolean, onDragStart: (component: React.ReactNode) => void }
 ) {
     const [showSketchfabSearch, setShowSketchfabSearch] = useState<boolean>(false);
     const [showMeshyGeneration, setShowMeshyGeneration] = useState<boolean>(false);
     const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+
+    useEffect(() => {
+        setShowMeshyGeneration(false);
+        setShowSketchfabSearch(false);
+    }, [visible]);
 
     const handleFileUpload = useCallback((file: File) => {
         const fileExtension = file.name.split('.').pop()?.toLowerCase() as 'glb' | 'fbx';
@@ -87,49 +92,50 @@ export default function Sidebar(
         setUploadedFiles(prev => [...prev, meshyFile]);
     }, []);
 
-    // Convert uploaded files to draggable objects
-    const uploadedObjects: DraggableObjectData[] = uploadedFiles.map(file => ({
-        id: file.id,
-        component: (
-            <Dynamic3DModel 
-                url={file.url} 
-                fileType={file.fileType}
-                isMeshyUrl={file.isMeshyUrl}
-            />
-        ),
-        name: file.name,
-        icon: file.source === 'sketchfab' ? '🌐' :
-            file.source === 'meshy' ? '🤖' :
-                (file.fileType === 'glb' ? '📦' : '🗃️'),
-        description: file.source === 'sketchfab'
-            ? `From Sketchfab • ${file.fileType.toUpperCase()}`
-            : file.source === 'meshy'
-                ? `AI Generated • ${file.fileType.toUpperCase()}`
-                : `Uploaded ${file.fileType.toUpperCase()} model`
-    }));
+    // Convert uploaded files to draggable objects with caching
+    const uploadedObjects: DraggableObjectData[] = useMemo(() =>
+        uploadedFiles.map(file => ({
+            id: file.id,
+            component: (
+                <Dynamic3DModel
+                    url={file.url}
+                    fileType={file.fileType}
+                    isMeshyUrl={file.isMeshyUrl}
+                />
+            ),
+            name: file.name,
+            icon: file.source === 'sketchfab' ? '🌐' :
+                file.source === 'meshy' ? '🤖' :
+                    (file.fileType === 'glb' ? '📦' : '🗃️'),
+            description: file.source === 'sketchfab'
+                ? `From Sketchfab • ${file.fileType.toUpperCase()}`
+                : file.source === 'meshy'
+                    ? `AI Generated • ${file.fileType.toUpperCase()}`
+                    : `Uploaded ${file.fileType.toUpperCase()} model`
+        })), [uploadedFiles]);
 
-    // Separate uploaded, Sketchfab, and Meshy models
-    const regularUploadedObjects = uploadedObjects.filter(obj => {
+    // Separate uploaded, Sketchfab, and Meshy models with caching
+    const regularUploadedObjects = useMemo(() => uploadedObjects.filter(obj => {
         const file = uploadedFiles.find(f => f.id === obj.id);
         return file?.source === 'upload';
-    });
+    }), [uploadedObjects, uploadedFiles]);
 
-    const sketchfabObjects = uploadedObjects.filter(obj => {
+    const sketchfabObjects = useMemo(() => uploadedObjects.filter(obj => {
         const file = uploadedFiles.find(f => f.id === obj.id);
         return file?.source === 'sketchfab';
-    });
+    }), [uploadedObjects, uploadedFiles]);
 
-    const meshyObjects = uploadedObjects.filter(obj => {
+    const meshyObjects = useMemo(() => uploadedObjects.filter(obj => {
         const file = uploadedFiles.find(f => f.id === obj.id);
         return file?.source === 'meshy';
-    });
+    }), [uploadedObjects, uploadedFiles]);
 
-    // Get existing Sketchfab model UIDs to prevent duplicates
-    const existingSketchfabUids = uploadedFiles
+    // Get existing Sketchfab model UIDs to prevent duplicates with caching
+    const existingSketchfabUids = useMemo(() => uploadedFiles
         .filter(file => file.source === 'sketchfab' && file.sketchfabModel)
-        .map(file => file.sketchfabModel!.uid);
+        .map(file => file.sketchfabModel!.uid), [uploadedFiles]);
 
-    const objectGroups: DraggableObjectGroup[] = [
+    const objectGroups: DraggableObjectGroup[] = useMemo(() => [
         // Add Meshy models group if there are any
         ...(meshyObjects.length > 0 ? [{
             id: 'meshy-models',
@@ -158,7 +164,7 @@ export default function Sidebar(
         }] : []),
 
         ...sidebarStaticObjectGroups
-    ];
+    ], [meshyObjects, sketchfabObjects, regularUploadedObjects]);
 
     return (
         <div>
@@ -168,7 +174,6 @@ export default function Sidebar(
                 onAddModelToSidebar={handleSketchfabModelAdd}
                 existingModelUids={existingSketchfabUids}
             />
-
             <MeshySideBar
                 show={showMeshyGeneration}
                 setShow={setShowMeshyGeneration}
@@ -202,4 +207,6 @@ export default function Sidebar(
             </div>
         </div>
     )
-}
+})
+
+export default Sidebar;

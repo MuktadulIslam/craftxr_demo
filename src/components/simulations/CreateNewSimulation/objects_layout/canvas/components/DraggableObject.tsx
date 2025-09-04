@@ -1,8 +1,9 @@
 import { DragControls } from "@react-three/drei"
-import React from "react"
+import React, { memo, useCallback } from "react"
 import { useEffect, useRef, useState } from "react"
 import * as THREE from 'three'
 import { useMeshContext } from "../context/MeshContext"
+import { SelectableObjectRef } from "../types"
 
 interface DraggableObjectProps {
   objectId: string,
@@ -10,10 +11,10 @@ interface DraggableObjectProps {
   groundSize: { width: number, depth: number },
   setOrbitEnabled: (enabled: boolean) => void,
   children: React.ReactNode,
-   meshRef?: React.RefObject<THREE.Mesh | THREE.Group | null>
+  meshRef?: SelectableObjectRef
 }
 
-export default function DraggableObject({
+const DraggableObject = memo(function DraggableObject({
   objectId,
   position,
   groundSize,
@@ -31,7 +32,7 @@ export default function DraggableObject({
   const groupRef = useRef<THREE.Group>(null)
   const actualMeshRef = meshRef || groupRef;
 
-  const fixedRingRadius = () => {
+  const fixedRingRadius = useCallback(() => {
     if (actualMeshRef.current) {
       const box = new THREE.Box3().setFromObject(actualMeshRef.current)
       const size = new THREE.Vector3()
@@ -47,7 +48,7 @@ export default function DraggableObject({
         outer: baseRadius + padding
       });
     }
-  }
+  }, [actualMeshRef])
 
 
   // Fixed useEffect in DraggableObject component
@@ -92,23 +93,23 @@ export default function DraggableObject({
 
       fixedRingRadius();
     }
-  }, [groundSize.width, groundSize.depth])
+  }, [groundSize.width, groundSize.depth, actualMeshRef, fixedRingRadius])
 
-  const handleDoubleClick = (event: React.MouseEvent) => {
+  const handleDoubleClick = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
     if (actualMeshRef.current) {
       setObject(actualMeshRef.current, objectId);
       setFixedRingRadiusCallback(() => fixedRingRadius);
     }
-  }
+  }, [actualMeshRef, objectId, setObject, setFixedRingRadiusCallback, fixedRingRadius]);
 
-  const handleClick = (event: React.MouseEvent) => {
+  const handleClick = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
     if (actualMeshRef.current && selectedObjectId == objectId) {
       setObject(actualMeshRef.current, objectId);
       setFixedRingRadiusCallback(() => fixedRingRadius);
     }
-  }
+  }, [actualMeshRef, objectId, setObject, setFixedRingRadiusCallback, fixedRingRadius]);
 
   return (
     <DragControls
@@ -138,4 +139,6 @@ export default function DraggableObject({
       </group>
     </DragControls>
   )
-}
+});
+
+export default DraggableObject;

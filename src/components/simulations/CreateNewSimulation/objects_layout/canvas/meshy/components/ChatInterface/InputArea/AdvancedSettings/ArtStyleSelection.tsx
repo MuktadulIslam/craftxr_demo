@@ -1,5 +1,5 @@
 'use client'
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, memo, SetStateAction } from "react";
 import { useMeshyChat } from "../../../../context/MeshyChatContext";
 import { ChevronDown } from 'lucide-react';
 import { artStyleOptions } from "./constent";
@@ -10,7 +10,7 @@ interface ArtStyleSelectionProps {
     setShow: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function ArtStyleSelection({ ref, show, setShow }: ArtStyleSelectionProps) {
+const ArtStyleSelection = memo(function ArtStyleSelection({ ref, show, setShow }: ArtStyleSelectionProps) {
     const { currentArtStyle, setCurrentArtStyle } = useMeshyChat();
 
     return (
@@ -52,4 +52,6 @@ export default function ArtStyleSelection({ ref, show, setShow }: ArtStyleSelect
             )}
         </div>
     )
-}
+});
+
+export default ArtStyleSelection;

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { User, Sparkles, Eye, RefreshCw } from 'lucide-react';
 import { ChatMessage as ChatMessageType } from '../../types';
 import Image from 'next/image';
@@ -9,7 +9,7 @@ interface UserMessageProps {
     message: ChatMessageType;
 }
 
-export default function UserMessage({ message }: UserMessageProps) {
+const UserMessage = memo(function UserMessage({ message }: UserMessageProps) {
     const formatTimestamp = (date: Date) => {
         return date.toLocaleTimeString('en-US', {
             hour: '2-digit',
@@ -18,7 +18,7 @@ export default function UserMessage({ message }: UserMessageProps) {
         });
     };
 
-    const getGenerationTypeIcon = (type?: string) => {
+    const getGenerationTypeIcon = useCallback((type?: string) => {
         switch (type) {
             case 'text-to-3d':
                 return <Sparkles size={12} />;
@@ -29,9 +29,9 @@ export default function UserMessage({ message }: UserMessageProps) {
             default:
                 return null;
         }
-    };
+    }, []);
 
-    const getGenerationTypeLabel = (type?: string) => {
+    const getGenerationTypeLabel = useCallback((type?: string) => {
         switch (type) {
             case 'text-to-3d':
                 return 'TEXT TO 3D';
@@ -42,7 +42,7 @@ export default function UserMessage({ message }: UserMessageProps) {
             default:
                 return null;
         }
-    };
+    }, []);
 
     const modelImageComponent = useCallback((image_url: string | null) => {
         if (image_url == null) return <></>;
@@ -128,4 +128,6 @@ export default function UserMessage({ message }: UserMessageProps) {
             </div>
         </div>
     );
-}
+});
+
+export default UserMessage;

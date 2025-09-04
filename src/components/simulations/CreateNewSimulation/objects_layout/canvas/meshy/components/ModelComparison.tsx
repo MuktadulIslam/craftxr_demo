@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { X, ArrowLeftRight, Download } from 'lucide-react';
 import { Meshy3DObjectResponse } from '../types';
 import { ModelViewer } from './ModelViewer';
@@ -10,11 +10,11 @@ interface ModelComparisonProps {
     onClose: () => void;
 }
 
-export default function ModelComparison({ models, onClose }: ModelComparisonProps) {
+const ModelComparison = memo(function ModelComparison({ models, onClose }: ModelComparisonProps) {
     const [selectedModels, setSelectedModels] = useState<[number, number]>([0, Math.min(1, models.length - 1)]);
     const [isError, setIsError] = useState<boolean>(false);
 
-    const handleDownload = (model: Meshy3DObjectResponse, format: 'glb' | 'fbx' | 'obj') => {
+    const handleDownload = useCallback((model: Meshy3DObjectResponse, format: 'glb' | 'fbx' | 'obj') => {
         const url = model.model_urls?.[format];
         if (url) {
             const link = document.createElement('a');
@@ -24,7 +24,7 @@ export default function ModelComparison({ models, onClose }: ModelComparisonProp
             link.click();
             document.body.removeChild(link);
         }
-    };
+    }, []);
 
     if (models.length < 2) {
         return null;
@@ -139,4 +139,6 @@ export default function ModelComparison({ models, onClose }: ModelComparisonProp
             </div>
         </div>
     );
-}
+});
+
+export default ModelComparison;

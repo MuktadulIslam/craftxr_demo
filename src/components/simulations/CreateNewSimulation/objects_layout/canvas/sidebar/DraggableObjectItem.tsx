@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { DraggableObjectData } from "./types";
 
 interface DraggableObjectItemProps {
@@ -6,7 +7,7 @@ interface DraggableObjectItemProps {
     onDragStart: (component: React.ReactNode) => void;
 }
 
-export default function DraggableObjectItem({ object, groupColor, onDragStart }: DraggableObjectItemProps) {
+const DraggableObjectItem= memo(function DraggableObjectItem({ object, groupColor, onDragStart }: DraggableObjectItemProps) {
     return (
         <div
             className="group/item relative flex items-center p-3 bg-gray-800/60 backdrop-blur-sm rounded-lg cursor-grab hover:bg-gray-700/70 transition-all duration-300 border border-gray-700/20 hover:border-gray-600/40 hover:shadow-md hover:shadow-gray-900/20 hover:scale-[1.01] active:scale-[0.98] ml-4"
@@ -44,4 +45,6 @@ export default function DraggableObjectItem({ object, groupColor, onDragStart }:
             <div className={`absolute inset-0 bg-gradient-to-r ${groupColor.replace('from-', 'from-').replace('to-', 'to-')}/3 rounded-lg opacity-0 group-hover/item:opacity-50 transition-opacity duration-300 pointer-events-none`}></div>
         </div>
     );
-}
+});
+
+export default DraggableObjectItem;

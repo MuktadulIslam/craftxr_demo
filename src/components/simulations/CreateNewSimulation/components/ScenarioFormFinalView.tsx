@@ -2,12 +2,17 @@ import { SimulationBasicInfoForm } from "@/types/simulations";
 import { CollapsibleText } from "@/components/text/CollapsibleText";
 import SimulationTree from "../../../reactflow/SimulationTree";
 import { DialogFlowEdge, DialogFlowNode } from "@/components/reactflow/types";
+import { useMemo } from "react";
 
 export default function ScenarioFormFinalView({ simulation, dialogFlowNodes, dialogFlowEdges }: {
     simulation: SimulationBasicInfoForm,
     dialogFlowNodes: DialogFlowNode[];
     dialogFlowEdges: DialogFlowEdge[];
 }) {
+    
+    const simulationTreeComponent = useMemo(() => (
+       <SimulationTree initialNodes={dialogFlowNodes} initialEdges={dialogFlowEdges} />
+    ), [dialogFlowEdges, dialogFlowNodes]);
     return (<>
         <div className="w-full h-full flex gap-3 relative p-5">
             <div className="flex flex-col gap-3">
@@ -19,26 +24,26 @@ export default function ScenarioFormFinalView({ simulation, dialogFlowNodes, dia
                         <div>
                             <div className="">Name:</div>
                             <div className="col-span-2">
-                                <CollapsibleText text={simulation.scenario_name} maxTextLength={200}/>
+                                <CollapsibleText text={simulation.scenario_name} maxTextLength={200} />
                             </div>
                         </div>
                         <div>
                             <div className="">Overview:</div>
                             <div className="col-span-2">
-                                <CollapsibleText text={simulation.scenario_overview} maxTextLength={200}/>
+                                <CollapsibleText text={simulation.scenario_overview} maxTextLength={200} />
                             </div>
                         </div>
 
                         <div>
                             <div className="">Description:</div>
                             <div className="col-span-2">
-                                <CollapsibleText text={simulation.scenario_description} maxTextLength={200}/>
+                                <CollapsibleText text={simulation.scenario_description} maxTextLength={200} />
                             </div>
                         </div>
                         <div>
                             <div className="">Related Details:</div>
                             <div className="col-span-2">
-                                <CollapsibleText text={simulation.scenario_related_details} maxTextLength={200}/>
+                                <CollapsibleText text={simulation.scenario_related_details} maxTextLength={200} />
                             </div>
                         </div>
                     </div>
@@ -52,13 +57,13 @@ export default function ScenarioFormFinalView({ simulation, dialogFlowNodes, dia
                         <div>
                             <div className="">Title:</div>
                             <div className="col-span-2">
-                                <CollapsibleText text={simulation.simulation_title} maxTextLength={200}/>
+                                <CollapsibleText text={simulation.simulation_title} maxTextLength={200} />
                             </div>
                         </div>
                         <div>
                             <div className="">Description:</div>
                             <div className="col-span-2">
-                                <CollapsibleText text={simulation.simulation_description} maxTextLength={200}/>
+                                <CollapsibleText text={simulation.simulation_description} maxTextLength={200} />
                             </div>
                         </div>
                         <div>
@@ -84,20 +89,20 @@ export default function ScenarioFormFinalView({ simulation, dialogFlowNodes, dia
                         <div>
                             <div className="">Program Affiliation:</div>
                             <div className="col-span-2">
-                                <CollapsibleText text={simulation?.program_affiliation_details?.program_name} maxTextLength={200}/>
+                                <CollapsibleText text={simulation?.program_affiliation_details?.program_name} maxTextLength={200} />
                             </div>
                         </div>
                         <div>
                             <div className="">Avatar Designation:</div>
                             <div className="col-span-2">
-                                <CollapsibleText text={simulation.avatar_designation} maxTextLength={200}/>
+                                <CollapsibleText text={simulation.avatar_designation} maxTextLength={200} />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="flex-1 h-auto border">
-                <SimulationTree initialNodes={dialogFlowNodes} initialEdges={dialogFlowEdges} />
+                {simulationTreeComponent}
             </div>
         </div>
     </>)

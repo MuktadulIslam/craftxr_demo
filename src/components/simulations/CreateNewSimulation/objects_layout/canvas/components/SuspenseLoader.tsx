@@ -1,6 +1,7 @@
 import { Html } from "@react-three/drei";
+import { memo } from "react";
 
-export default function HtmlLoader() {
+const HtmlLoader = memo(function HtmlLoader() {
     return (
         <Html center>
             <div className="spinner"></div>
@@ -20,4 +21,6 @@ export default function HtmlLoader() {
       `}</style>
         </Html>
     )
-}
+});
+
+export default HtmlLoader;

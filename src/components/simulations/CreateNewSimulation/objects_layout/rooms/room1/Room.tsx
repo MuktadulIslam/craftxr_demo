@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Plane } from '@react-three/drei';
 import TiledFloor from './TiledFloor';
 import WallWithOpenings from './WallWithOpenings';
@@ -8,7 +8,7 @@ interface RoomProps {
   length: number;     // length of x-axis 
   width: number;      // length of z-axis 
 }
-export default function Room({ width, length }: RoomProps) {
+const Room = memo(function Room({ width, length }: RoomProps) {
 
   const { dimensions, colors, doors = [], windows = [], wallDecorations = [] } = getRoomConfig(width, length);
   const { width: roomWidth, length: roomLength, height: roomHeight } = dimensions;
@@ -78,4 +78,6 @@ export default function Room({ width, length }: RoomProps) {
       />
     </group>
   );
-};
+});
+
+export default Room;

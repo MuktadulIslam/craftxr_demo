@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, KeyboardEvent, ChangeEvent } from 'react';
+import React, { useRef, useEffect, KeyboardEvent, ChangeEvent, memo, useCallback } from 'react';
 import { useMeshyChat } from '../../../context/MeshyChatContext';
 
 interface ChatInputProps {
@@ -10,32 +10,32 @@ interface ChatInputProps {
     disabled?: boolean;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({
+const ChatInput = memo(function ChatInput({
     onSendMessage,
     placeholder = "Type your message here...",
     minHeight = 50,
     maxHeight = 200,
     maxLength = 600,
     disabled
-}) => {
+}: ChatInputProps) {
 
     const { currentInput, setCurrentInput } = useMeshyChat();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     // Auto-resize textarea
-    const adjustHeight = () => {
+    const adjustHeight = useCallback(() => {
         const textarea = textareaRef.current;
         if (textarea) {
             textarea.style.height = 'auto';
             const newHeight = Math.min(textarea.scrollHeight, maxHeight);
             textarea.style.height = `${newHeight}px`;
         }
-    };
+    }, [maxHeight, textareaRef]);
 
     // Adjust height when message changes
     useEffect(() => {
         adjustHeight();
-    }, [currentInput, maxHeight]);
+    }, [currentInput, maxHeight, adjustHeight]);
 
     const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setCurrentInput(e.target.value);
@@ -85,6 +85,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
             </div>
         </div>
     );
-};
+});
 
 export default ChatInput;

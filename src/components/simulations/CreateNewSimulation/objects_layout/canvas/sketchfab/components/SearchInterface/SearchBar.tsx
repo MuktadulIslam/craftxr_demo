@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
 interface SearchBarProps {
     onSearch: (newQuery: string) => void;
@@ -8,7 +8,7 @@ interface SearchBarProps {
     isSearching: boolean;
 }
 
-export default function SearchBar({ onSearch, currentQuery, isSearching }: SearchBarProps) {
+const SearchBar = memo(function SearchBar({ onSearch, currentQuery, isSearching }: SearchBarProps) {
     const [inputValue, setInputValue] = useState(currentQuery);
 
     useEffect(() => {
@@ -41,4 +41,6 @@ export default function SearchBar({ onSearch, currentQuery, isSearching }: Searc
             </div>
         </div>
     );
-}
+});
+
+export default SearchBar;

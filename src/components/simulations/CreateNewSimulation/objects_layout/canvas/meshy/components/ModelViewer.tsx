@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from 'react';
+import { memo, Suspense, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Html } from '@react-three/drei';
 import { LuRotate3D } from "react-icons/lu";
@@ -18,7 +18,7 @@ interface ModelViewerProps {
     hideHeader?: boolean;
 }
 
-function LoadingSpinner() {
+const LoadingSpinner = memo(function LoadingSpinner() {
     return (
         <Html center>
             <div className="flex items-center justify-center">
@@ -26,9 +26,9 @@ function LoadingSpinner() {
             </div>
         </Html>
     );
-}
+});
 
-export function ModelViewer({ modelUrl, modelData, showControls = true, showPreview = true, hideHeader = false, setIsError, className }: ModelViewerProps) {
+export const ModelViewer = memo(function ModelViewer({ modelUrl, modelData, showControls = true, showPreview = true, hideHeader = false, setIsError, className }: ModelViewerProps) {
     const [resetKey, setResetKey] = useState(0);
     const [autoRotate, setAutoRotate] = useState(false);
     const [isExpanded, setExpanded] = useState(false);
@@ -151,4 +151,4 @@ export function ModelViewer({ modelUrl, modelData, showControls = true, showPrev
             </div>
         </>
     );
-}
+});

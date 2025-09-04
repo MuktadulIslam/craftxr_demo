@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import GenerationTypeSelection from "./GenerationTypeSelection";
 import ModelSelection from "./ModelSelection";
 import ArtStyleSelection from "./ArtStyleSelection";
@@ -9,7 +9,7 @@ interface AdvancedSettingsProps {
     showSettings: boolean
 }
 
-export default function AdvancedSettings({ showSettings }: AdvancedSettingsProps) {
+const AdvancedSettings = memo(function AdvancedSettings({ showSettings }: AdvancedSettingsProps) {
     const [showModelDropdown, setShowModelDropdown] = useState(false);
     const [showArtStyleDropdown, setShowArtStyleDropdown] = useState(false);
     const [showSymmetryDropdown, setShowSymmetryDropdown] = useState(false);
@@ -78,4 +78,6 @@ export default function AdvancedSettings({ showSettings }: AdvancedSettingsProps
             <GenerationTypeSelection ref={generationTypeDropdownRef} setShow={setShowGenerationTypeDropdown} show={showGenerationTypeDropdown} />
         </>
     );
-}
+});
+
+export default AdvancedSettings;

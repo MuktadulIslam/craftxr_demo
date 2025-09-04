@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import DraggableObjectItem from "./DraggableObjectItem";
 import { DraggableObjectGroup } from "./types";
 
@@ -7,15 +7,15 @@ interface SidebarGroupedObjectsProps {
     onDragStart: (component: React.ReactNode) => void;
 }
 
-export default function SidebarGroupedObjects({ objectGroups, onDragStart }: SidebarGroupedObjectsProps) {
+const SidebarGroupedObjects = memo(function SidebarGroupedObjects({ objectGroups, onDragStart }: SidebarGroupedObjectsProps) {
     const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
-    const toggleGroup = (groupId: string) => {
+    const toggleGroup = useCallback((groupId: string) => {
         setExpandedGroups(prev => ({
             ...prev,
             [groupId]: !prev[groupId]
         }));
-    };
+    }, []);
 
     return (
         <>
@@ -79,4 +79,6 @@ export default function SidebarGroupedObjects({ objectGroups, onDragStart }: Sid
             </div>
         </>
     );
-}
+});
+
+export default SidebarGroupedObjects;

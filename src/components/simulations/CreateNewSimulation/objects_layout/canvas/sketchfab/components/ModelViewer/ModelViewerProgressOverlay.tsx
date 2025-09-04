@@ -1,8 +1,10 @@
+import { memo } from "react";
+
 interface ModelViewerProgressOverlayProps {
     progress: number;
 }
 
-export default function ModelViewerProgressOverlay({ progress }: ModelViewerProgressOverlayProps) {
+const ModelViewerProgressOverlay = memo(function ModelViewerProgressOverlay({ progress }: ModelViewerProgressOverlayProps) {
     return (
         <div className="absolute top-16 left-6 right-6 z-10">
             <div className="bg-black/70 backdrop-blur-sm rounded-lg p-3">
@@ -53,4 +55,6 @@ export default function ModelViewerProgressOverlay({ progress }: ModelViewerProg
             </div>
         </div>
     );
-}
+});
+
+export default ModelViewerProgressOverlay;

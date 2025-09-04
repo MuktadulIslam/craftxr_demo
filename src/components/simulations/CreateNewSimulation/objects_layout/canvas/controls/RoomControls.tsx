@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 
 interface RoomControlsProps {
     length: number;
@@ -8,7 +8,7 @@ interface RoomControlsProps {
 }
 
 // Room controls component
-export default function RoomControls({
+const RoomControls = memo(function RoomControls({
     length,
     width,
     onLengthChange,
@@ -19,25 +19,25 @@ export default function RoomControls({
     const MAX_WIDTH = 40;
     const MIN_WIDTH = 6;
 
-    const handleWidthInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleWidthInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
         if (!isNaN(value) && value >= MIN_WIDTH && value <= MAX_WIDTH) {
             onWidthChange(value);
         }
-    };
+    }, [onWidthChange]);
 
-    const handleLengthInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleLengthInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
         if (!isNaN(value) && value >= MIN_LENGTH && value <= MAX_LENGTH) {
             onLengthChange(value);
         }
-    };
+    }, [onLengthChange]);
 
     return (
-        <div className="z-50 absolute top-5 right-5 text-white font-sans text-sm bg-gray-900/90 bg-opacity-80 p-5 rounded-lg w-[270px]">
-            <h3 className="m-0 mb-4 text-white text-lg font-bold">Room Controls</h3>
+        <div className="z-50 absolute top-[50px] right-5 text-white font-sans text-sm bg-gray-900/90 bg-opacity-80 px-4 py-2 rounded-lg w-[270px]">
+            <h3 className="m-0 mb-3 text-white text-lg font-bold">Room Controls</h3>
 
-            <div className="mb-4">
+            <div className="mb-2">
                 <label className="block mb-1">
                     Length: {length} tiles
                 </label>
@@ -62,7 +62,7 @@ export default function RoomControls({
                 </div>
             </div>
 
-            <div className="mb-5">
+            <div className="mb-2">
                 <label className="block mb-1">
                     Width: {width} tiles
                 </label>
@@ -87,10 +87,7 @@ export default function RoomControls({
                 </div>
             </div>
 
-            <div className="border-t border-gray-600 pt-4">
-                <div className="text-xs opacity-80 mb-2.5">
-                    <strong>Total tiles: {length * width}</strong>
-                </div>
+            <div className="border-t border-gray-600 mt-1.5">
                 <div className="text-xs opacity-80">
                     <div>⚙️ Scroll to zoom</div>
                     <div>🔧 Ctrl+Shift+Z to toggle controls</div>
@@ -99,4 +96,6 @@ export default function RoomControls({
             </div>
         </div>
     );
-};
+});
+
+export default RoomControls;

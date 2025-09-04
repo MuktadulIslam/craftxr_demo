@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { SketchfabModel } from "../../types";
 import ModelCard from "./ModelCard";
 
@@ -12,7 +13,7 @@ interface ModelGridProps {
     existingModelUids: string[];
 }
 
-export default function ModelGrid({
+const ModelGrid = memo(function ModelGrid({
     models,
     onModelSelect,
     onDownloadModel,
@@ -39,4 +40,6 @@ export default function ModelGrid({
             ))}
         </div>
     );
-}
+});
+
+export default ModelGrid;

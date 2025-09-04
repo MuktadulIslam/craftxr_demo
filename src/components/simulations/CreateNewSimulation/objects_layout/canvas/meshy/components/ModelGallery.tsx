@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { Grid3X3, X, Download, Eye, ArrowLeftRight } from 'lucide-react';
 import { Meshy3DObjectResponse } from '../types';
 import { ModelViewer } from './ModelViewer';
@@ -12,11 +12,11 @@ interface ModelGalleryProps {
     onCompare: (models: Meshy3DObjectResponse[]) => void;
 }
 
-export default function ModelGallery({ models, onClose, onSelectModel, onCompare }: ModelGalleryProps) {
+const ModelGallery = memo(function ModelGallery({ models, onClose, onSelectModel, onCompare }: ModelGalleryProps) {
     const [selectedModels, setSelectedModels] = useState<Set<string>>(new Set());
     const [isError, setIsError] = useState<boolean>(false);
 
-    const handleModelSelect = (modelId: string) => {
+    const handleModelSelect = useCallback((modelId: string) => {
         const newSelected = new Set(selectedModels);
         if (newSelected.has(modelId)) {
             newSelected.delete(modelId);
@@ -24,9 +24,9 @@ export default function ModelGallery({ models, onClose, onSelectModel, onCompare
             newSelected.add(modelId);
         }
         setSelectedModels(newSelected);
-    };
+    }, [selectedModels]);
 
-    const handleDownload = (model: Meshy3DObjectResponse, format: 'glb' | 'fbx' | 'obj') => {
+    const handleDownload = useCallback((model: Meshy3DObjectResponse, format: 'glb' | 'fbx' | 'obj') => {
         const url = model.model_urls?.[format];
         if (url) {
             const link = document.createElement('a');
@@ -36,14 +36,14 @@ export default function ModelGallery({ models, onClose, onSelectModel, onCompare
             link.click();
             document.body.removeChild(link);
         }
-    };
+    }, []);
 
-    const handleCompareSelected = () => {
+    const handleCompareSelected = useCallback(() => {
         const modelsToCompare = models.filter(m => selectedModels.has(m.id));
         if (modelsToCompare.length >= 2) {
             onCompare(modelsToCompare);
         }
-    };
+    }, [models, onCompare, selectedModels]);
 
     const formatTimestamp = (timestamp?: number) => {
         if (!timestamp) return 'Unknown';
@@ -213,4 +213,6 @@ export default function ModelGallery({ models, onClose, onSelectModel, onCompare
             </div>
         </div>
     );
-}
+});
+
+export default ModelGallery;

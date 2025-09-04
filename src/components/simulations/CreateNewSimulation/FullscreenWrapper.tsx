@@ -31,7 +31,7 @@ export default function FullscreenWrapper({ children, iconPosition = 'top-right'
         return () => {
             document.removeEventListener('keydown', handleEscapeKey);
         };
-    }, [isFullscreen]);
+    }, [isFullscreen, fullScreenByKey]);
 
     const toggleFullscreen = () => {
         setIsFullscreen(!isFullscreen);

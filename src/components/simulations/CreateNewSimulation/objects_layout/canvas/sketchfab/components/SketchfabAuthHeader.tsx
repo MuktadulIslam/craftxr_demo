@@ -2,12 +2,13 @@
 
 import { LogOut, User } from 'lucide-react';
 import { useSketchfabAuth } from '../context/SketchfabAuthContext';
+import { memo } from 'react';
 
 interface SketchfabAuthHeaderProps {
     onNotify?: (message: string, type: 'success' | 'error' | 'info') => void;
 }
 
-export default function SketchfabAuthHeader({ onNotify }: SketchfabAuthHeaderProps) {
+const SketchfabAuthHeader = memo(function SketchfabAuthHeader({ onNotify }: SketchfabAuthHeaderProps) {
     const { user, logout, loading } = useSketchfabAuth();
 
     const handleLogout = async () => {
@@ -51,4 +52,6 @@ export default function SketchfabAuthHeader({ onNotify }: SketchfabAuthHeaderPro
             </button>
         </div>
     );
-}
+});
+
+export default SketchfabAuthHeader;

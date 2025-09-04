@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Plane } from '@react-three/drei';
 import { WallType, Window } from './types';
 
@@ -14,7 +14,7 @@ interface WindowComponentProps {
   wall: WallType;
 }
 
-export default function WindowComponent({ window, wallSpec, wall }: WindowComponentProps) {
+const WindowComponent = memo(function WindowComponent({ window, wallSpec, wall }: WindowComponentProps) {
   // Calculate position relative to wall center
   const relativeX = window.fromLeftSide + (window.width / 2) - (wallSpec.wallLength / 2);
   const relativeY = window.fromFloor + (window.height / 2);
@@ -130,4 +130,6 @@ export default function WindowComponent({ window, wallSpec, wall }: WindowCompon
       </Plane>
     </group>
   );
-};
+});
+
+export default WindowComponent;

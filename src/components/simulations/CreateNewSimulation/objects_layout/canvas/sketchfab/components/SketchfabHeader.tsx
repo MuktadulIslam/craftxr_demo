@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react';
 import { EB_Garamond } from 'next/font/google';
+import { memo } from 'react';
 
 const ebGaramond = EB_Garamond({
     subsets: ['latin'],
@@ -12,7 +13,7 @@ interface SketchfabHeaderProps {
     setShow: (show: boolean) => void;
 }
 
-export default function SketchfabHeader({ setShow }: SketchfabHeaderProps) {
+const SketchfabHeader = memo(function SketchfabHeader({ setShow }: SketchfabHeaderProps) {
     return (
         <div className="text-center mb-5 mt-3 relative">
             <button
@@ -33,4 +34,6 @@ export default function SketchfabHeader({ setShow }: SketchfabHeaderProps) {
             </div>
         </div>
     );
-}
+});
+
+export default SketchfabHeader;

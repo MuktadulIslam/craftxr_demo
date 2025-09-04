@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, memo } from 'react';
 import { RefreshCw, Trash2, ArrowLeftRight, Grid3X3 } from 'lucide-react';
 import { useMeshyChat } from '../../context/MeshyChatContext';
 import ModelComparison from '../ModelComparison';
@@ -18,8 +18,7 @@ interface ChatInterfaceProps {
         model: any;
     }) => void;
 }
-
-export default function ChatInterface({ onAddModelToSidebar }: ChatInterfaceProps) {
+const ChatInterface = memo(function ChatInterface({ onAddModelToSidebar }: ChatInterfaceProps) {
     const { messages, startNewSession, clearSession, setCurrent3DModel, currentGenerationType } = useMeshyChat();
     const [showComparison, setShowComparison] = useState(false);
     const [showGallery, setShowGallery] = useState(false);
@@ -43,9 +42,9 @@ export default function ChatInterface({ onAddModelToSidebar }: ChatInterfaceProp
 
 
     // Get all generated models from messages for comparison
-    const generatedModels = messages
+    const generatedModels = useMemo(() => messages
         .filter(msg => msg.modelData && msg.type === 'assistant')
-        .map(msg => msg.modelData!);
+        .map(msg => msg.modelData!), [messages]);
 
     return (
         <div className="flex flex-col h-full bg-black/50 backdrop-blur-md ">
@@ -135,4 +134,6 @@ export default function ChatInterface({ onAddModelToSidebar }: ChatInterfaceProp
             )}
         </div >
     );
-}
+});
+
+export default ChatInterface;

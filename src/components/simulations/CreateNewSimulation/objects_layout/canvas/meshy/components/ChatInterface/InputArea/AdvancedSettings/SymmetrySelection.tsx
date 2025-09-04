@@ -1,6 +1,6 @@
 'use client'
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, memo, SetStateAction } from "react";
 import { useMeshyChat } from "../../../../context/MeshyChatContext";
 import { ChevronDown } from 'lucide-react';
 import { symmetryOptions } from "./constent";
@@ -11,7 +11,7 @@ interface SymmetrySelectionProps {
     setShow: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function SymmetrySelection({ ref, show, setShow }: SymmetrySelectionProps) {
+const SymmetrySelection = memo(function SymmetrySelection({ ref, show, setShow }: SymmetrySelectionProps) {
     const { currentSymmetry, setCurrentSymmetry } = useMeshyChat();
 
     return (
@@ -53,4 +53,6 @@ export default function SymmetrySelection({ ref, show, setShow }: SymmetrySelect
             )}
         </div>
     )
-}
+});
+
+export default SymmetrySelection;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import { SketchfabModel } from '../../types';
 import ModelViewerHeader from './ModelViewerHeader';
 import ModelViewerProgressOverlay from './ModelViewerProgressOverlay';
@@ -16,7 +16,7 @@ interface ModelViewerProps {
     isAlreadyInSidebar?: boolean;
 }
 
-export default function ModelViewer({
+const ModelViewer = memo(function ModelViewer({
     model,
     handleDownloadModel,
     handleAddToSidebar,
@@ -57,4 +57,6 @@ export default function ModelViewer({
             </div>
         </div>
     );
-}
+})
+
+export default ModelViewer;
