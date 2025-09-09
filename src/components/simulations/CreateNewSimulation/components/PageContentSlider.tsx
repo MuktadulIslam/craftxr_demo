@@ -20,8 +20,6 @@ export default function PageContentSlider() {
     } = useSimulationForm();
     const watchedData = watch();
 
-    // console.log('hi');
-
     const scenarioInfoFormComponent = useMemo(() => (
         <ScenarioInfoForm
             register={register}

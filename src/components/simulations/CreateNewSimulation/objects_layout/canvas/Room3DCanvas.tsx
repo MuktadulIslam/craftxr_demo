@@ -136,11 +136,11 @@ function Room3DCanvasContent() {
 
 const Room3DCanvas = memo(function Room3DCanvas() {
     return (
-        <RoomProvider initialDimensions={{ width: 20, length: 25, height: 5 }}>
-            <MeshProvider>
+        // <RoomProvider initialDimensions={{ width: 20, length: 25, height: 5 }}>
+        //     <MeshProvider>
                 <Room3DCanvasContent />
-            </MeshProvider>
-        </RoomProvider>
+        //     </MeshProvider>
+        // </RoomProvider>
     );
 });
 

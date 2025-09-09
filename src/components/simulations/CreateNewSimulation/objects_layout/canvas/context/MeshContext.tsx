@@ -7,17 +7,13 @@ interface MeshContextType {
   setObjects: React.Dispatch<React.SetStateAction<PlacedObject[]>>;
   addObject: (object: PlacedObject) => void;
   removeObject: (objectId: string) => void;
+  updateObjectPosition: (objectId: string, newPosition: [number, number, number]) => void;
 
   // Selected object management
   selectedObject: SelectableObject;
   selectedObjectId: string | null;
   setObject: (object: SelectableObject, objectId: string) => void;
   clearObject: () => void;
-
-  // Position fixing callback (set by the selected DraggableObject)
-  fixedRingRadius: (() => void) | null;
-  setFixedRingRadiusCallback: (callback: (() => void) | null) => void;
-
   // Object controls visibility
   isObjectControlsVisible: boolean;
 }
@@ -44,9 +40,6 @@ export function MeshProvider({ children }: MeshProviderProps) {
   const [selectedObject, setSelectedObject] = useState<SelectableObject>(null);
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
 
-  // Position fixing callback
-  const [fixedRingRadius, setFixedRingRadiusCallback] = useState<(() => void) | null>(null);
-
   // Object controls visibility
   const [isObjectControlsVisible, setObjectControlsVisible] = useState<boolean>(false);
 
@@ -64,6 +57,14 @@ export function MeshProvider({ children }: MeshProviderProps) {
     }
   };
 
+  const updateObjectPosition = (objectId: string, newPosition: [number, number, number]) => {
+    setObjects(prev => prev.map(obj => 
+      obj.id === objectId 
+        ? { ...obj, position: newPosition }
+        : obj
+    ));
+  };
+
   const setObject = (object: SelectableObject, objectId: string) => {
     setSelectedObject(object);
     setSelectedObjectId(objectId);
@@ -74,7 +75,6 @@ export function MeshProvider({ children }: MeshProviderProps) {
     setSelectedObject(null);
     setSelectedObjectId(null);
     setObjectControlsVisible(false);
-    setFixedRingRadiusCallback(null);
   };
 
   const value: MeshContextType = {
@@ -82,12 +82,11 @@ export function MeshProvider({ children }: MeshProviderProps) {
     setObjects,
     addObject,
     removeObject,
+    updateObjectPosition,
     selectedObject,
     selectedObjectId,
     setObject,
     clearObject,
-    fixedRingRadius,
-    setFixedRingRadiusCallback,
     isObjectControlsVisible,
   };
 

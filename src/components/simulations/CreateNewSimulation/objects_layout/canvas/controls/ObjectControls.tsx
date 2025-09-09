@@ -4,11 +4,11 @@ import { FaRotateLeft, FaRotateRight } from "react-icons/fa6";
 import { useMeshContext } from '../context/MeshContext';
 
 const ObjectControls = memo(function ObjectControls() {
-  const { selectedObject, selectedObjectId, removeObject, clearObject, fixedRingRadius } = useMeshContext();
+  const { selectedObject, selectedObjectId, removeObject, clearObject, } = useMeshContext();
   const [scale, setScale] = useState<[number, number, number]>([1, 1, 1]);
   const [rotation, setRotation] = useState<[number, number, number]>([0, 0, 0]);
   const [uniformScale, setUniformScale] = useState<number>(1);
-
+  
   // Constants
   const MAX_SCALE = 4;
   const MIN_SCALE = 0.1;
@@ -69,11 +69,8 @@ const ObjectControls = memo(function ObjectControls() {
       else if (axis === 1) selectedObject.scale.y = clampedValue;
       else if (axis === 2) selectedObject.scale.z = clampedValue;
       updateObjectPosition();
-      if (fixedRingRadius) {
-        fixedRingRadius();
-      }
     }
-  }, [selectedObject, MAX_SCALE, MIN_SCALE, fixedRingRadius, scale, updateObjectPosition]);
+  }, [selectedObject, MAX_SCALE, MIN_SCALE, scale, updateObjectPosition]);
 
   // Normalize rotation to keep it within -360 to 360 degrees
   const normalizeRotation = useCallback((degrees: number): number => {
@@ -95,11 +92,8 @@ const ObjectControls = memo(function ObjectControls() {
       else if (axis === 1) selectedObject.rotation.y = radians;
       else if (axis === 2) selectedObject.rotation.z = radians;
       updateObjectPosition();
-      if (fixedRingRadius) {
-        fixedRingRadius();
-      }
     }
-  }, [selectedObject, rotation, updateObjectPosition, fixedRingRadius, normalizeRotation]);
+  }, [selectedObject, rotation, updateObjectPosition, normalizeRotation]);
 
   const handleQuickRotation = useCallback((axis: number, clockwise: boolean) => {
     const currentRotationDegrees = (rotation[axis] * 180) / Math.PI;
@@ -120,12 +114,8 @@ const ObjectControls = memo(function ObjectControls() {
     if (selectedObject) {
       selectedObject.scale.set(clampedValue, clampedValue, clampedValue);
       updateObjectPosition();
-      if (fixedRingRadius) {
-        fixedRingRadius();
-      }
-
     }
-  }, [MIN_SCALE, MAX_SCALE, selectedObject, updateObjectPosition, fixedRingRadius]);
+  }, [MIN_SCALE, MAX_SCALE, selectedObject, updateObjectPosition]);
 
   const handleReset = useCallback(() => {
     const resetScale: [number, number, number] = [1, 1, 1];
@@ -140,11 +130,8 @@ const ObjectControls = memo(function ObjectControls() {
       selectedObject.scale.set(1, 1, 1);
       selectedObject.rotation.set(0, 0, 0);
       updateObjectPosition();
-      if (fixedRingRadius) {
-        fixedRingRadius();
-      }
     }
-  }, [selectedObject, updateObjectPosition, fixedRingRadius]);
+  }, [selectedObject, updateObjectPosition]);
 
   const handleDelete = useCallback(() => {
     if (selectedObjectId && selectedObject) {
