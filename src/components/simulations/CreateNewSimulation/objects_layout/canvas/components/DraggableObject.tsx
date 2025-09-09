@@ -1,5 +1,5 @@
 import { DragControls } from "@react-three/drei"
-import React, { memo, useCallback, useEffect, useRef, useState } from "react"
+import React, { memo, use, useCallback, useEffect, useRef, useState } from "react"
 import * as THREE from 'three'
 import { useMeshContext } from "../context/MeshContext"
 import { SelectableObjectRef } from "../types"
@@ -34,27 +34,27 @@ const applyGlowEffect = (object: THREE.Object3D, isSelected: boolean, isHovered:
           child.material.emissive.setHex(0x0066ff);
           child.material.emissiveIntensity = 0.3;
         }
-        if (child.material.color) {
-          child.material.color.copy(original.color).multiplyScalar(1.2);
-        }
+        // if (child.material.color) {
+        //   child.material.color.copy(original.color).multiplyScalar(1.2);
+        // }
       } else if (isHovered) {
         // Hovered effect - green glow
         if (child.material.emissive) {
           child.material.emissive.setHex(0x00ff66);
           child.material.emissiveIntensity = 0.2;
         }
-        if (child.material.color) {
-          child.material.color.copy(original.color).multiplyScalar(1.1);
-        }
+        // if (child.material.color) {
+        //   child.material.color.copy(original.color).multiplyScalar(1.1);
+        // }
       } else {
         // Reset to original
         if (child.material.emissive) {
           child.material.emissive.copy(original.emissive);
           child.material.emissiveIntensity = original.emissiveIntensity;
         }
-        if (child.material.color) {
-          child.material.color.copy(original.color);
-        }
+        // if (child.material.color) {
+        //   child.material.color.copy(original.color);
+        // }
       }
 
       // Ensure material updates
@@ -73,23 +73,32 @@ const DraggableObject = memo(function DraggableObject({
 }: DraggableObjectProps) {
 
   const { setObject, selectedObjectId } = useMeshContext();
-  const [isHovered, setIsHovered] = useState(false)
   const [objectPosition, setObjectPosition] = useState<[number, number, number]>([position[0], 0, position[2]]) // for now everything should be on ground
   const [dragLimits, setDragLimits] = useState<[[number, number], [number, number], [number, number]]>([[0, groundSize.width], [0, 0], [0, groundSize.depth]])
   const groupRef = useRef<THREE.Group>(null)
   const actualMeshRef = meshRef || groupRef;
 
-  const isSelected = selectedObjectId === objectId;
-
-  // Apply glow effects when selection or hover state changes
   useEffect(() => {
-    if (actualMeshRef.current) {
-      applyGlowEffect(actualMeshRef.current, isSelected, isHovered);
+    if (selectedObjectId == objectId && actualMeshRef.current) {
+      actualMeshRef.current?.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          child.material.emissive.setHex(0x0066ff);
+          child.material.emissiveIntensity = 0.3;
+        }
+      });
     }
-  }, [isSelected, isHovered, actualMeshRef]);
 
+    return () => {
+      if (actualMeshRef.current) {
+        actualMeshRef.current?.traverse((child) => {
+          if (child instanceof THREE.Mesh && child.material) {
+            child.material.emissiveIntensity = 0;
+          }
+        });
+      }
+    }
+  }, [selectedObjectId])
 
-  // Fixed useEffect in DraggableObject component
   useEffect(() => {
     if (actualMeshRef.current) {
       const box = new THREE.Box3().setFromObject(actualMeshRef.current)
@@ -137,20 +146,27 @@ const DraggableObject = memo(function DraggableObject({
     }
   }, [actualMeshRef, objectId, setObject]);
 
-  const handleClick = useCallback((event: React.MouseEvent) => {
-    event.stopPropagation();
-    if (actualMeshRef.current && selectedObjectId == objectId) {
-      setObject(actualMeshRef.current.children[0], objectId);
-    }
-  }, [actualMeshRef, objectId, setObject]);
-
   const handlePointerOver = useCallback(() => {
-    setIsHovered(true);
-  }, []);
+    if (selectedObjectId !== objectId) {
+      actualMeshRef.current?.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          child.material.emissive.setHex(0x00ff66);
+          child.material.emissiveIntensity = 0.2;
+        }
+      });
+    }
+  }, [selectedObjectId]);
 
   const handlePointerOut = useCallback(() => {
-    setIsHovered(false);
-  }, []);
+    if (selectedObjectId !== objectId) {
+      actualMeshRef.current?.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          child.material.emissive.setHex(0x00ff66);
+          child.material.emissiveIntensity = 0;
+        }
+      });
+    }
+  }, [selectedObjectId]);
 
   return (
     <DragControls
@@ -164,7 +180,6 @@ const DraggableObject = memo(function DraggableObject({
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
         onDoubleClick={handleDoubleClick}
-        onClick={handleClick}
       >
         {children}
       </group>

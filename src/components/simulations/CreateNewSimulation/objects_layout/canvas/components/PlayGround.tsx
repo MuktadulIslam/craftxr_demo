@@ -57,6 +57,7 @@ const PlayGround = memo(function PlayGround({
                             position: [point.x, 1, point.z],
                             meshRef: meshRef // Add this line
                         };
+                        console.log(newObject);
 
                         addObject(newObject);
                     }
@@ -102,7 +103,7 @@ const PlayGround = memo(function PlayGround({
                             depth: roomWidth
                         }}
                         setOrbitEnabled={setOrbitEnabled}
-                        meshRef={obj.meshRef} // Add this line
+                        meshRef={obj.meshRef}
                     >
                         {React.cloneElement(obj.component as React.ReactElement, { key: obj.id })}
                     </DraggableObject>
