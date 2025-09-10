@@ -253,19 +253,19 @@ export function SimulationFormProvider({ children }: { children: ReactNode }) {
                 throw new Error('File upload failed');
             }
 
-            const { program_affiliation_details, ...dataToSubmit } = watch();
-            void program_affiliation_details;
+            // const { program_affiliation_details, ...dataToSubmit } = watch();
+            // void program_affiliation_details;
 
-            const result = await createSimulation.mutateAsync({
-                ...dataToSubmit,
-                chats: convertFlowToChat(updatedNodes, updatedEdges)
-            });
+            // const result = await createSimulation.mutateAsync({
+            //     ...dataToSubmit,
+            //     chats: convertFlowToChat(updatedNodes, updatedEdges)
+            // });
 
-            if (result) {
-                alert('Simulation created successfully!');
-                deleteNewSimulationStoredData();
-                router.push(`/simulations/maxview/${result.simulation_id}`);
-            }
+            // if (result) {
+            //     alert('Simulation created successfully!');
+            //     deleteNewSimulationStoredData();
+            //     router.push(`/simulations/maxview/${result.simulation_id}`);
+            // }
         } catch (error) {
             alert(`Error creating simulation: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
         } finally {

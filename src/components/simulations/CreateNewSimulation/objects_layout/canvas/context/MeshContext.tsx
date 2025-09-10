@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { SelectableObject, PlacedObject } from '../types';
+import { SelectableObject, PlacedObject, SelectableObjectRef } from '../types';
 
 interface MeshContextType {
+  // Current Object management (being dragged for placement)
+  currentObject: React.ReactNode | null;
+  setCurrentObject: React.Dispatch<React.SetStateAction<React.ReactNode | null>>;
+  currentObjectRef: SelectableObjectRef | null;
+  setCurrentObjectRef: React.Dispatch<React.SetStateAction<SelectableObjectRef | null>>;
+
   // Objects management
   objects: PlacedObject[];
   setObjects: React.Dispatch<React.SetStateAction<PlacedObject[]>>;
@@ -35,6 +41,9 @@ interface MeshProviderProps {
 export function MeshProvider({ children }: MeshProviderProps) {
   // Objects state
   const [objects, setObjects] = useState<PlacedObject[]>([]);
+  // Current object being placed
+  const [currentObject, setCurrentObject] = useState<React.ReactNode | null>(null);
+  const [currentObjectRef, setCurrentObjectRef] = useState<SelectableObjectRef | null>(null);
 
   // Selected object state
   const [selectedObject, setSelectedObject] = useState<SelectableObject>(null);
@@ -78,6 +87,10 @@ export function MeshProvider({ children }: MeshProviderProps) {
   };
 
   const value: MeshContextType = {
+    currentObject,
+    setCurrentObject,
+    currentObjectRef,
+    setCurrentObjectRef,
     objects,
     setObjects,
     addObject,

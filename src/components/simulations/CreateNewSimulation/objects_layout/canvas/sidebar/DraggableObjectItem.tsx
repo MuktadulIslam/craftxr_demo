@@ -1,21 +1,29 @@
-import { memo } from "react";
+import { memo, useRef } from "react";
 import { DraggableObjectData } from "./types";
+import { useMeshContext } from "../context/MeshContext";
+import { SelectableObject } from "../types";
+import React from "react";
 
 interface DraggableObjectItemProps {
     object: DraggableObjectData;
     groupColor: string;
-    onDragStart: (component: React.ReactNode) => void;
 }
 
-const DraggableObjectItem= memo(function DraggableObjectItem({ object, groupColor, onDragStart }: DraggableObjectItemProps) {
+const DraggableObjectItem= memo(function DraggableObjectItem({ object, groupColor }: DraggableObjectItemProps) {
+    const { setCurrentObject, setCurrentObjectRef } = useMeshContext();
+    
+    const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+        event.dataTransfer.setData('text/plain', object.id);
+        const meshRef = React.createRef<SelectableObject>();
+        setCurrentObject(object.componentFactory(meshRef));
+        setCurrentObjectRef(meshRef);
+    }
+
     return (
         <div
             className="group/item relative flex items-center p-3 bg-gray-800/60 backdrop-blur-sm rounded-lg cursor-grab hover:bg-gray-700/70 transition-all duration-300 border border-gray-700/20 hover:border-gray-600/40 hover:shadow-md hover:shadow-gray-900/20 hover:scale-[1.01] active:scale-[0.98] ml-4"
             draggable
-            onDragStart={(e) => {
-                e.dataTransfer.setData('text/plain', object.id)
-                onDragStart(object.component)
-            }}
+            onDragStart={onDragStart}
         >
             {/* Drag indicator */}
             <div className="absolute top-2 right-2 opacity-0 group-hover/item:opacity-60 transition-opacity duration-200">

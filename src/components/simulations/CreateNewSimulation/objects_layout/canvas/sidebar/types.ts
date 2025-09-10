@@ -1,6 +1,8 @@
+import { SelectableObjectRef } from "../types";
+
 export interface DraggableObjectData {
     id: string;
-    component: React.ReactNode;
+    componentFactory: (meshRef: SelectableObjectRef) => React.ReactNode ;
     name: string;
     icon: string;
     description: string;

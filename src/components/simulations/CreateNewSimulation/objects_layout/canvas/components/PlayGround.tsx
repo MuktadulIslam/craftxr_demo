@@ -9,8 +9,6 @@ import { useMeshContext } from "../context/MeshContext"
 
 
 interface PlayGroundProps {
-    currentObject: { component: React.ReactNode } | null;
-    setCurrentObject: React.Dispatch<React.SetStateAction<{ component: React.ReactNode } | null>>;
     setOrbitEnabled: (enabled: boolean) => void;
     roomLength: number;
     roomWidth: number;
@@ -18,8 +16,6 @@ interface PlayGroundProps {
 }
 
 const PlayGround = memo(function PlayGround({
-    currentObject,
-    setCurrentObject,
     setOrbitEnabled,
     roomWidth,
     roomLength,
@@ -27,14 +23,14 @@ const PlayGround = memo(function PlayGround({
 }: PlayGroundProps) {
     const { camera, raycaster, gl } = useThree();
     const groundRef = useRef<THREE.Mesh>(null);
-    const { objects, addObject, clearObject } = useMeshContext();
+    const { objects, addObject, clearObject, currentObject, currentObjectRef, setCurrentObject, setCurrentObjectRef } = useMeshContext();
 
     // Handle drop events
     useEffect(() => {
         const handleDrop = (e: DragEvent) => {
             e.preventDefault();
 
-            if (currentObject) {
+            if (currentObject && currentObjectRef) {
                 const canvas = gl.domElement;
                 const rect = canvas.getBoundingClientRect();
                 const mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -48,22 +44,19 @@ const PlayGround = memo(function PlayGround({
                     if (intersects.length > 0) {
                         const point = intersects[0].point;
 
-                        // Create a ref for this specific object
-                        const meshRef = React.createRef<THREE.Mesh>();
-
                         const newObject: PlacedObject = {
                             id: Date.now().toString(),
-                            component: currentObject.component,
+                            component: currentObject,
                             position: [point.x, 1, point.z],
-                            meshRef: meshRef // Add this line
+                            meshRef: currentObjectRef
                         };
-                        console.log(newObject);
 
                         addObject(newObject);
                     }
                 }
 
                 setCurrentObject(null);
+                setCurrentObjectRef(null);
             }
         };
 
@@ -79,7 +72,7 @@ const PlayGround = memo(function PlayGround({
             document.removeEventListener('drop', handleDrop);
             document.removeEventListener('dragover', preventDefaults);
         };
-    }, [currentObject, setCurrentObject, camera, raycaster, gl, addObject]);
+    }, [currentObject, setCurrentObject, currentObjectRef, setCurrentObjectRef, camera, raycaster, gl, addObject]);
 
     // Handle floor click to deselect objects
     const handleFloorClick = useCallback((event: React.MouseEvent) => {
@@ -103,7 +96,7 @@ const PlayGround = memo(function PlayGround({
                             depth: roomWidth
                         }}
                         setOrbitEnabled={setOrbitEnabled}
-                        meshRef={obj.meshRef}
+                        meshRef={obj.meshRef} // Add this line
                     >
                         {React.cloneElement(obj.component as React.ReactElement, { key: obj.id })}
                     </DraggableObject>

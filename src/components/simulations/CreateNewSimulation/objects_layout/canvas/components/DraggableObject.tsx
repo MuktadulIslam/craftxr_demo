@@ -13,55 +13,6 @@ interface DraggableObjectProps {
   meshRef?: SelectableObjectRef
 }
 
-// Utility function to apply glow effect to all meshes in an object
-const applyGlowEffect = (object: THREE.Object3D, isSelected: boolean, isHovered: boolean) => {
-  object.traverse((child) => {
-    if (child instanceof THREE.Mesh && child.material) {
-      // Store original material properties if not already stored
-      if (!child.userData.originalMaterial) {
-        child.userData.originalMaterial = {
-          emissive: child.material.emissive?.clone() || new THREE.Color(0x000000),
-          emissiveIntensity: child.material.emissiveIntensity || 0,
-          color: child.material.color?.clone() || new THREE.Color(0xffffff),
-        };
-      }
-
-      const original = child.userData.originalMaterial;
-
-      if (isSelected) {
-        // Selected effect - blue glow
-        if (child.material.emissive) {
-          child.material.emissive.setHex(0x0066ff);
-          child.material.emissiveIntensity = 0.3;
-        }
-        // if (child.material.color) {
-        //   child.material.color.copy(original.color).multiplyScalar(1.2);
-        // }
-      } else if (isHovered) {
-        // Hovered effect - green glow
-        if (child.material.emissive) {
-          child.material.emissive.setHex(0x00ff66);
-          child.material.emissiveIntensity = 0.2;
-        }
-        // if (child.material.color) {
-        //   child.material.color.copy(original.color).multiplyScalar(1.1);
-        // }
-      } else {
-        // Reset to original
-        if (child.material.emissive) {
-          child.material.emissive.copy(original.emissive);
-          child.material.emissiveIntensity = original.emissiveIntensity;
-        }
-        // if (child.material.color) {
-        //   child.material.color.copy(original.color);
-        // }
-      }
-
-      // Ensure material updates
-      child.material.needsUpdate = true;
-    }
-  });
-};
 
 const DraggableObject = memo(function DraggableObject({
   objectId,

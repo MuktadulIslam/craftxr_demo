@@ -3,6 +3,8 @@ import { useMeshyModelUrl } from '../hooks/useMeshyModelUrl';
 import { useModelCache } from '../hooks/useModelCache';
 import { memo, Suspense, useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import ScaledModelWrapper from '../../components/ScaledModelWrapper';
+import { SelectableObjectRef } from '../../types';
 
 // Loading component for when the model is being fetched
 const ModelLoadingFallback = memo(function ModelLoadingFallback() {
@@ -43,11 +45,12 @@ const CachedGLTFModel = memo(function CachedGLTFModel({ meshyUrl, blobUrl }: { m
 
 interface MeshyModelProps {
     url: string;
+    meshRef: SelectableObjectRef;
     setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Updated Model component with comprehensive caching
-const MeshyModel = memo(function MeshyModel({ url, setIsError }: MeshyModelProps) {
+const MeshyModel = memo(function MeshyModel({ url, meshRef, setIsError }: MeshyModelProps) {
     const { getCachedModel } = useModelCache();
     // Move ALL hooks to the top level - they must always be called
     const { data: blobUrl, isLoading } = useMeshyModelUrl(url);
@@ -75,7 +78,9 @@ const MeshyModel = memo(function MeshyModel({ url, setIsError }: MeshyModelProps
             }}
         >
             <Suspense fallback={<ModelLoadingFallback />}>
-                <CachedGLTFModel meshyUrl={url} blobUrl={blobUrl} />
+                <ScaledModelWrapper meshRef={meshRef}>
+                    <CachedGLTFModel meshyUrl={url} blobUrl={blobUrl} />
+                </ScaledModelWrapper>
             </Suspense>
         </ErrorBoundary>
     );

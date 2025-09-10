@@ -4,10 +4,9 @@ import { DraggableObjectGroup } from "./types";
 
 interface SidebarGroupedObjectsProps {
     objectGroups: DraggableObjectGroup[];
-    onDragStart: (component: React.ReactNode) => void;
 }
 
-const SidebarGroupedObjects = memo(function SidebarGroupedObjects({ objectGroups, onDragStart }: SidebarGroupedObjectsProps) {
+const SidebarGroupedObjects = memo(function SidebarGroupedObjects({ objectGroups }: SidebarGroupedObjectsProps) {
     const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
     const toggleGroup = useCallback((groupId: string) => {
@@ -68,7 +67,6 @@ const SidebarGroupedObjects = memo(function SidebarGroupedObjects({ objectGroups
                                             key={index}
                                             object={obj}
                                             groupColor={group.color}
-                                            onDragStart={onDragStart}
                                         />
                                     ))}
                                 </div>

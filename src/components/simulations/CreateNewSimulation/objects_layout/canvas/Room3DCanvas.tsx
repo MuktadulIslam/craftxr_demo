@@ -15,7 +15,6 @@ import { RoomProvider, useRoomContext } from './context/RoomDimensionsContext';
 function Room3DCanvasContent() {
     const [controlsVisible, setControlsVisible] = useState<boolean>(true);
     const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
-    const [currentObject, setCurrentObject] = useState<{ component: React.ReactNode } | null>(null)
     const [orbitEnabled, setOrbitEnabled] = useState(true)
     const [freezeOrbit, setFreezeOrbit] = useState(false)
 
@@ -65,14 +64,10 @@ function Room3DCanvasContent() {
         };
     }, []);
 
-    const handleDragStart = (component: React.ReactNode) => {
-        setCurrentObject({ component })
-    }
 
     return (
         <div className="w-full h-full relative overflow-hidden bg-[#226764a8]">
             <Sidebar
-                onDragStart={handleDragStart}
                 visible={sidebarVisible}
             />
             {controlsVisible &&
@@ -110,8 +105,6 @@ function Room3DCanvasContent() {
                     {/* Room structure */}
                     <PlayGround
                         key={`${roomDimensions.width}-${roomDimensions.length}`}
-                        currentObject={currentObject}
-                        setCurrentObject={setCurrentObject}
                         setOrbitEnabled={setOrbitEnabled}
                         roomWidth={roomDimensions.width}
                         roomLength={roomDimensions.length}

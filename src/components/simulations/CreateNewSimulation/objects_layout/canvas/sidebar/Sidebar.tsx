@@ -8,6 +8,7 @@ import Dynamic3DModel from "./Dynamic3DModel"
 import { SketchfabModel } from "../sketchfab/types"
 import { Meshy3DObjectResponse } from "../meshy/types"
 import { sidebarStaticObjectGroups } from "./utils"
+import { SelectableObjectRef } from "../types";
 
 interface UploadedFile {
     id: string;
@@ -21,10 +22,7 @@ interface UploadedFile {
     isMeshyUrl?: boolean;
 }
 
-const Sidebar = memo(function Sidebar(
-    { visible, onDragStart }:
-        { visible: boolean, onDragStart: (component: React.ReactNode) => void }
-) {
+const Sidebar = memo(function Sidebar({ visible }: { visible: boolean }) {
     const [showSketchfabSearch, setShowSketchfabSearch] = useState<boolean>(false);
     const [showMeshyGeneration, setShowMeshyGeneration] = useState<boolean>(false);
     const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
@@ -96,13 +94,14 @@ const Sidebar = memo(function Sidebar(
     const uploadedObjects: DraggableObjectData[] = useMemo(() =>
         uploadedFiles.map(file => ({
             id: file.id,
-            component: (
-                <Dynamic3DModel
+            componentFactory: (meshRef: SelectableObjectRef) => {
+                 return <Dynamic3DModel
                     url={file.url}
                     fileType={file.fileType}
                     isMeshyUrl={file.isMeshyUrl}
+                    meshRef={meshRef}
                 />
-            ),
+            },
             name: file.name,
             icon: file.source === 'sketchfab' ? '🌐' :
                 file.source === 'meshy' ? '🤖' :
@@ -187,10 +186,7 @@ const Sidebar = memo(function Sidebar(
                     onFileUpload={handleFileUpload}
                 />
 
-                <SidebarGroupedObjects
-                    objectGroups={objectGroups}
-                    onDragStart={onDragStart}
-                />
+                <SidebarGroupedObjects objectGroups={objectGroups}/>
 
                 {/* Footer */}
                 <div className="p-2 border-t border-gray-700/30 bg-gradient-to-r from-gray-900 to-gray-800">

@@ -2,12 +2,15 @@
 import { useGLTF } from '@react-three/drei'
 import { useMemo } from 'react'
 import ScaledModelWrapper from '../../canvas/components/ScaledModelWrapper'
+import { SelectableObjectRef } from '../../canvas/types'
 
-export default function Keyboard() {
+export default function Keyboard({ meshRef }: { meshRef: SelectableObjectRef }) {
     const { scene } = useGLTF('/xr_3dmodels/keyboard.glb')
     const clonedScene = useMemo(() => scene.clone(), [scene])
 
-    return <ScaledModelWrapper>
-        <primitive object={clonedScene} />
-    </ScaledModelWrapper>
+    return (
+        <ScaledModelWrapper meshRef={meshRef}>
+            <primitive object={clonedScene} />
+        </ScaledModelWrapper>
+    );
 }
