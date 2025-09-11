@@ -13,6 +13,13 @@ interface DraggableObjectProps {
   meshRef?: SelectableObjectRef
 }
 
+// Store original material states
+interface MaterialState {
+  material: THREE.Material;
+  originalEmissive: THREE.Color;
+  originalEmissiveIntensity: number;
+}
+
 
 const DraggableObject = memo(function DraggableObject({
   objectId,
@@ -28,28 +35,10 @@ const DraggableObject = memo(function DraggableObject({
   const [dragLimits, setDragLimits] = useState<[[number, number], [number, number], [number, number]]>([[0, groundSize.width], [0, 0], [0, groundSize.depth]])
   const groupRef = useRef<THREE.Group>(null)
   const actualMeshRef = meshRef || groupRef;
+  // Store original material states for this specific instance
+  const originalMaterialsRef = useRef<Map<THREE.Material, MaterialState>>(new Map());
 
-  useEffect(() => {
-    if (selectedObjectId == objectId && actualMeshRef.current) {
-      actualMeshRef.current?.traverse((child) => {
-        if (child instanceof THREE.Mesh && child.material) {
-          child.material.emissive.setHex(0x0066ff);
-          child.material.emissiveIntensity = 0.3;
-        }
-      });
-    }
-
-    return () => {
-      if (actualMeshRef.current) {
-        actualMeshRef.current?.traverse((child) => {
-          if (child instanceof THREE.Mesh && child.material) {
-            child.material.emissiveIntensity = 0;
-          }
-        });
-      }
-    }
-  }, [selectedObjectId])
-
+  // Setting Object Limits
   useEffect(() => {
     if (actualMeshRef.current) {
       const box = new THREE.Box3().setFromObject(actualMeshRef.current)
@@ -97,27 +86,80 @@ const DraggableObject = memo(function DraggableObject({
     }
   }, [actualMeshRef, objectId, setObject]);
 
-  const handlePointerOver = useCallback(() => {
-    if (selectedObjectId !== objectId) {
-      actualMeshRef.current?.traverse((child) => {
+
+  // Apply hover effect
+  const applyHoverEffect = useCallback((isHover: boolean, isSelected: boolean = false) => {
+    if (!actualMeshRef.current) return;
+
+    actualMeshRef.current.traverse((child) => {
+      if (child instanceof THREE.Mesh && child.material) {
+        const materials = Array.isArray(child.material) ? child.material : [child.material];
+
+        materials.forEach((mat) => {
+          const materialState = originalMaterialsRef.current.get(mat);
+          if (materialState) {
+            if (isSelected) {
+              mat.emissive.setHex(0x0066ff);
+              mat.emissiveIntensity = 0.3;
+            } else if (isHover) {
+              mat.emissive.setHex(0x00ff66);
+              mat.emissiveIntensity = 0.2;
+            } else {
+              // Restore original state
+              mat.emissive.copy(materialState.originalEmissive);
+              mat.emissiveIntensity = materialState.originalEmissiveIntensity;
+            }
+          }
+        });
+      }
+    });
+  }, [actualMeshRef]);
+
+  // Initialize and store original material states
+  useEffect(() => {
+    if (actualMeshRef.current) {
+      actualMeshRef.current.traverse((child) => {
         if (child instanceof THREE.Mesh && child.material) {
-          child.material.emissive.setHex(0x00ff66);
-          child.material.emissiveIntensity = 0.2;
+          const materials = Array.isArray(child.material) ? child.material : [child.material];
+
+          materials.forEach((mat) => {
+            if (!originalMaterialsRef.current.has(mat)) {
+              // Clone the material for this instance
+              const clonedMaterial = mat.clone();
+              child.material = Array.isArray(child.material)
+                ? child.material.map(m => m === mat ? clonedMaterial : m)
+                : clonedMaterial;
+
+              // Store original state
+              originalMaterialsRef.current.set(clonedMaterial, {
+                material: clonedMaterial,
+                originalEmissive: clonedMaterial.emissive?.clone() || new THREE.Color(0x000000),
+                originalEmissiveIntensity: clonedMaterial.emissiveIntensity || 0
+              });
+            }
+          });
         }
       });
     }
-  }, [selectedObjectId]);
+  }, [children, actualMeshRef]);
+
+  // Selection effect
+  useEffect(() => {
+    const isSelected = selectedObjectId === objectId;
+    applyHoverEffect(false, isSelected);
+  }, [selectedObjectId, objectId, applyHoverEffect]);
+
+  const handlePointerOver = useCallback(() => {
+    if (selectedObjectId !== objectId) {
+      applyHoverEffect(true, false);
+    }
+  }, [selectedObjectId, objectId, applyHoverEffect]);
 
   const handlePointerOut = useCallback(() => {
     if (selectedObjectId !== objectId) {
-      actualMeshRef.current?.traverse((child) => {
-        if (child instanceof THREE.Mesh && child.material) {
-          child.material.emissive.setHex(0x00ff66);
-          child.material.emissiveIntensity = 0;
-        }
-      });
+      applyHoverEffect(false, false);
     }
-  }, [selectedObjectId]);
+  }, [selectedObjectId, objectId, applyHoverEffect]);
 
   return (
     <DragControls
